@@ -1,0 +1,26 @@
+{
+    "name": "${localWorkspaceFolderBasename}",
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
+    "runArgs": [
+        // set a human friendly machine name for the container
+        "--hostname=${localWorkspaceFolderBasename}"
+    ],
+    "customizations": {
+        "vscode": {
+            // IDs of extensions installed when the container is created.
+            "extensions": [
+                // C code Intellisense and code formater / helpers.
+                "ms-vscode.cpptools",
+                // Protocol buffers syntax.
+                "peterj.proto"
+            ],
+            // Container specific settings.json values on container create.
+            "settings": {
+                // Slow down scrolling in intergrated terminal
+                "terminal.integrated.mouseWheelScrollSensitivity": 0.2
+            }
+        }
+    }
+}
