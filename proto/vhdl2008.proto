@@ -1,0 +1,3020 @@
+// SPDX-License-Identifier: MIT
+// BNF notation is from IEEE Std 1076-2008 and subject to its licence agreement.
+
+// The following is an BNF excerpt from VHDL-2008 standard. Its notation is
+// transformed to (almost) equivalent Protocol-Buffers.
+// "Entrypoint" of recursive proto VHDL definition is "DesignFile".
+// Notable changes:
+//  - all things PSL were excluded
+//  - tool directives were excluded
+//  - identifier/name handling is based on simple strings
+
+syntax = "proto2";
+package VHDL2008;
+
+// entity_declaration ::=
+//      entity <identifier> is
+//          <entity_header>
+//          <entity_declarative_part>
+//      [ begin <entity_statement_part> ]
+//      end [ entity ] [ entity_simple_name ] ;
+message EntityDeclaration {
+    required Identifier id = 1;
+    required EntityHeader header = 2;
+    required EntityDeclarativePart declPart = 3;
+    optional EntityStatementPart stmtPart = 4;
+}
+
+// entity_header ::=
+//      [ formal_<generic_clause> ]
+//      [ formal_<port_clause> ]
+message EntityHeader {
+    optional GenericClause genClause = 1;
+    optional PortClause portClause = 2;
+}
+
+// entity_declarative_part ::=
+//      { <entity_declarative_item> }
+message EntityDeclarativePart {
+    repeated EntityDeclarativeItem items = 1;
+}
+
+// entity_declarative_item ::=
+//      <subprogram_declaration>
+//    | <subprogram_body>
+//    | <subprogram_instantiation_declaration>
+//    | <package_declaration>
+//    | <package_body>
+//    | <package_instantiation_declaration>
+//    | <type_declaration>
+//    | <subtype_declaration>
+//    | <constant_declaration>
+//    | <signal_declaration>
+//    | shared_<variable_declaration>
+//    | <file_declaration>
+//    | <alias_declaration>
+//    | <attribute_declaration>
+//    | <attribute_specification>
+//    | <disconnection_specification>
+//    | <use_clause>
+//    | <group_template_declaration>
+//    | <group_declaration>
+message EntityDeclarativeItem {
+    oneof item {
+        SubprogramDeclaration subprogramDecl = 1;
+        SubprogramBody subprogramBody = 2;
+        SubprogramInstantiationDeclaration subprogramInstDecl = 3;
+        PackageDeclaration pkgDecl = 4;
+        PackageInstantiationDeclaration pkgInstDecl = 5;
+        TypeDeclaration typeDecl = 6;
+        ConstantDeclaration constDecl = 7;
+        SignalDeclaration sigDecl = 8;
+        VariableDeclaration varDecl = 9;
+        FileDeclaration fileDecl = 10;
+        AliasDeclaration aliasDecl = 11;
+        AttributeDeclaration attrDecl = 12;
+        AttributeSpecification attrSpec = 13;
+        DisconnectionSpecification disconSpec = 14;
+        UseClause useClause = 15;
+        GroupTemplateDeclaration grpTmpDecl = 16;
+        GroupDeclaration grpDecl = 17;
+    }
+}
+
+// entity_statement_part ::=
+//      { <entity_statement> }
+message EntityStatementPart {
+    repeated EntityStatement stmts = 1;
+}
+
+// entity_statement ::=
+//      <concurrent_assertion_statement>
+//    | passive_<concurrent_procedure_call_statement>
+//    | passive_<process_statement>
+message EntityStatement {
+    oneof stmt {
+        ConcurrentAssertionStatement conAssertStmt = 1;
+        ConcurrentProcedureCallStatement conProcCallStmt = 2;
+        ProcessStatement procStmt = 3;
+    }
+}
+
+// architecture_body ::=
+//      architecture <identifier> of entity_<name> is
+//          <architecture_declarative_part>
+//      begin
+//          <architecture_statement_part>
+//      end [ architecture ] [ architecture_simple_name ] ;
+message ArchitectureBody {
+    required Identifier id = 1;
+    required Name entityName = 2;
+    required ArchitectureDeclarativePart declPart = 3;
+    required ArchitectureStatementPart stmtPart = 4;
+}
+
+// architecture_declarative_part ::=
+//      { <block_declarative_item> }
+message ArchitectureDeclarativePart {
+    repeated BlockDeclarativeItem items = 1;
+}
+
+// block_declarative_item ::=
+//      <subprogram_declaration>
+//    | <subprogram_body>
+//    | <subprogram_instantiation_declaration>
+//    | <package_declaration>
+//    | <package_body>
+//    | <package_instantiation_declaration>
+//    | <type_declaration>
+//    | <subtype_declaration>
+//    | <constant_declaration>
+//    | <signal_declaration>
+//    | shared_<variable_declaration>
+//    | <file_declaration>
+//    | <alias_declaration>
+//    | <component_declaration>
+//    | <attribute_declaration>
+//    | <attribute_specification>
+//    | <configuration_specification>
+//    | <disconnection_specification>
+//    | <use_clause>
+//    | <group_template_declaration>
+//    | <group_declaration>
+message BlockDeclarativeItem {
+    oneof item {
+        SubprogramDeclaration subprogramDecl = 1;
+        SubprogramBody subprogramBody = 2;
+        SubprogramInstantiationDeclaration subprogramInstDecl = 3;
+        PackageDeclaration pkgDecl = 4;
+        PackageBody pkgBody = 5;
+        PackageInstantiationDeclaration pkgInstDecl = 6;
+        TypeDeclaration typeDecl = 7;
+        SubtypeDeclaration subtypeDecl = 8;
+        ConstantDeclaration constDecl = 9;
+        SignalDeclaration sigDecl = 10;
+        VariableDeclaration varDecl = 11;
+        FileDeclaration fileDecl = 12;
+        AliasDeclaration aliasDecl = 13;
+        ComponentDeclaration compDecl = 14;
+        AttributeDeclaration attrDecl = 15;
+        AttributeSpecification attrSpec = 16;
+        ConfigurationSpecification configSpec = 17;
+        DisconnectionSpecification disconSpec = 18;
+        UseClause useClause = 19;
+        GroupTemplateDeclaration grpTmpDecl = 20;
+        GroupDeclaration grpDecl = 21;
+    }
+}
+
+// architecture_statement_part ::=
+//      { <concurrent_statement> }
+message ArchitectureStatementPart {
+    repeated ConcurrentStatement stmts = 1;
+}
+
+// configuration_declaration ::=
+//      configuration <identifier> of entity_<name> is
+//          <configuration_declarative_part>
+//          <block_configuration>
+//      end [ configuration ] [ configuration_simple_name ] ;
+message ConfigurationDeclaration {
+    required Identifier id = 1;
+    required Name entityName = 2;
+    required ConfigurationDeclarativePart declPart = 3;
+    required BlockConfiguration blockConfig = 5;
+}
+
+// configuration_declarative_part ::=
+//      { <configuration_declarative_item> }
+message ConfigurationDeclarativePart {
+    repeated ConfigurationDeclarativeItem items = 1;
+}
+
+// configuration_declarative_item ::=
+//      <use_clause>
+//    | <attribute_specification>
+//    | <group_declaration>
+message ConfigurationDeclarativeItem {
+    oneof item {
+        UseClause useClause = 1;
+        AttributeSpecification attrSpec = 2;
+        GroupDeclaration grpDecl = 3;
+    }
+}
+
+// block_configuration ::=
+//      for <block_specification>
+//          { <use_clause> }
+//          { <configuration_item> }
+//      end for ;
+message BlockConfiguration {
+    required BlockSpecification blockSpec = 1;
+    repeated UseClause useClauses = 2;
+    repeated ConfigurationItem configItems = 3;
+}
+
+// block_specification ::=
+//      architecture_<name>
+//    | block_statement_<label>
+//    | generate_statement_<label> [ ( generate_specification ) ]
+message BlockSpecification {
+    oneof spec {
+        Name archName = 1;
+        Label blockStmtLabel = 2;
+        GenerateSpecification generateSpec = 3;
+    }
+}
+
+// generate_specification ::=
+//      static_<discrete_range>
+//    | static_<expression>
+//    | alternative_<label>
+message GenerateSpecification {
+    required Label label = 1;
+    oneof spec {
+        DiscreteRange staticDiscRange = 2;
+        Expression staticExp = 3;
+        Label altLabel = 4;
+    }
+}
+
+// configuration_item ::=
+//      <block_configuration>
+//    | <component_configuration>
+message ConfigurationItem {
+    oneof item {
+        BlockConfiguration blockConfig = 1;
+        ComponentConfiguration compConfig = 2;
+    }
+}
+
+// component_configuration ::=
+//      for <component_specification>
+//          [ <binding_indication> ; ]
+//          [ <block_configuration> ]
+//      end for;
+message ComponentConfiguration {
+    required ComponentSpecification compSpec = 1;
+    optional BindingIndication bindingInd = 2;
+    optional BlockConfiguration blockConfig = 3;
+}
+
+// subprogram_declaration ::=
+//      <subprogram_specification> ;
+message SubprogramDeclaration {
+    required SubprogramSpecification spec = 1;
+}
+
+// subprogram_specification ::=
+//      <procedure_specification> | <function_specification>
+message SubprogramSpecification {
+    oneof spec {
+        ProcedureSpecification procSpec = 1;
+        FunctionSpecification funcSpec = 2;
+    }
+}
+
+// procedure_specification ::=
+//      procedure <identifier>
+//      <subprogram_header>
+//      [ [ parameter ] ( <formal_parameter_list> ) ]
+message ProcedureSpecification {
+    required Identifier id = 1;
+    required SubprogramHeader header = 2;
+    optional FormalParameterList paramList = 3;
+}
+
+// function_specification ::=
+//      [ pure | impure ] function <designator>
+//      <subprogram_header>
+//      [ [ parameter ] ( <formal_parameter_list> ) ] return <type_mark>
+message FunctionSpecification {
+    enum Purity {
+        PURE = 0;
+        IMPURE = 1;
+    }
+    optional Purity purity = 1;
+    required Designator designator = 2;
+    required SubprogramHeader header = 3;
+    optional FormalParameterList paramList = 4;
+    required TypeMark typeMark = 5;
+}
+
+// subprogram_header ::=
+//      [ generic ( <generic_list> )
+//      [ <generic_map_aspect> ] ]
+message SubprogramHeader {
+    optional GenericList genList = 1;
+    optional GenericMapAspect genMapAspect = 2;
+}
+
+// designator ::= <identifier> | <operator_symbol>
+message Designator {
+    oneof designator {
+        Identifier id = 1;
+        OperatorSymbol opSymbol = 2;
+    }
+}
+
+// operator_symbol ::= string_literal
+message OperatorSymbol {
+    required string value = 1;
+}
+
+// formal_parameter_list ::= parameter_<interface_list>
+message FormalParameterList {
+    required InterfaceList list = 1;
+}
+
+// subprogram_body ::=
+//      <subprogram_specification> is
+//          <subprogram_declarative_part>
+//      begin
+//          <subprogram_statement_part>
+//      end [ <subprogram_kind> ] [ <designator> ];
+message SubprogramBody {
+    required SubprogramSpecification spec = 1;
+    required SubprogramDeclarativePart declPart = 2;
+    required SubprogramStatementPart stmtPart = 3;
+}
+
+// subprogram_declarative_part ::=
+//      { <subprogram_declarative_item> }
+message SubprogramDeclarativePart {
+    repeated SubprogramDeclarativeItem items = 1;
+}
+
+// subprogram_declarative_item ::=
+//      <subprogram_declaration>
+//    | <subprogram_body>
+//    | <subprogram_instantiation_declaration>
+//    | <package_declaration>
+//    | <package_body>
+//    | <package_instantiation_declaration>
+//    | <type_declaration>
+//    | <subtype_declaration>
+//    | <constant_declaration>
+//    | <variable_declaration>
+//    | <file_declaration>
+//    | <alias_declaration>
+//    | <attribute_declaration>
+//    | <attribute_specification>
+//    | <use_clause>
+//    | <group_template_declaration>
+//    | <group_declaration>
+message SubprogramDeclarativeItem {
+    oneof item {
+        SubprogramDeclaration subprogDecl = 1;
+        SubprogramBody subprogBody = 2;
+        SubprogramInstantiationDeclaration subprogInstDecl = 3;
+        PackageDeclaration pkgDecl = 4;
+        PackageBody pkgBody = 5;
+        PackageInstantiationDeclaration pkgInstDecl = 6;
+        TypeDeclaration typeDecl = 7;
+        SubtypeDeclaration subtypeDecl = 8;
+        ConstantDeclaration constDecl = 9;
+        VariableDeclaration varDecl = 11;
+        FileDeclaration fileDecl = 12;
+        AliasDeclaration aliasDecl = 13;
+        AttributeDeclaration attrDecl = 14;
+        AttributeSpecification attrSpec = 15;
+        UseClause useClause = 16;
+        GroupTemplateDeclaration grpTmpDecl = 17;
+        GroupDeclaration grpDecl = 18;
+    }
+}
+
+// subprogram_statement_part ::=
+//      { <sequential_statement> }
+message SubprogramStatementPart {
+    repeated SequentialStatement stmts = 1;
+}
+
+// subprogram_kind ::= procedure | function
+enum SubprogramKind {
+    PROCEDURE = 0;
+    FUNCTION = 1;
+}
+
+// subprogram_instantiation_declaration ::=
+//      <subprogram_kind> <designator> is
+//      new uninstantiated_subprogram_<name> [ <signature> ]
+//      [ generic_map_aspect ] ;
+message SubprogramInstantiationDeclaration {
+    required SubprogramKind kind = 1;
+    required Designator designator = 2;
+    required Name uninstSubprogName = 3;
+    optional Signature signature = 4;
+    optional GenericMapAspect genMapAspect = 5;
+}
+
+// signature ::= [ [ <type_mark> { , <type_mark> } ] [ return <type_mark> ] ]
+message Signature {
+    repeated TypeMark typeMarks = 1;
+    optional TypeMark returnTypeMark = 2;
+}
+
+// package_declaration ::=
+//      package <identifier> is
+//          <package_header>
+//          <package_declarative_part>
+//      end [ package ] [ package_simple_name ] ;
+message PackageDeclaration {
+    required Identifier id = 1;
+    required PackageHeader header = 2;
+    required PackageDeclarativePart declPart = 3;
+}
+
+// package_header ::=
+//      [ <generic_clause>
+//      [ <generic_map_aspect> ; ] ]
+message PackageHeader {
+    message _Gen {
+        required GenericClause genClause = 1;
+        optional GenericMapAspect genMapAspect = 2;
+    }
+    optional _Gen gen = 1;
+}
+
+// package_declarative_part ::=
+//      { <package_declarative_item> }
+message PackageDeclarativePart {
+    repeated PackageDeclarativeItem items = 1;
+}
+
+// package_declarative_item ::=
+//      <subprogram_declaration>
+//    | <subprogram_instantiation_declaration>
+//    | <package_declaration>
+//    | <package_instantiation_declaration>
+//    | <type_declaration>
+//    | <subtype_declaration>
+//    | <constant_declaration>
+//    | <signal_declaration>
+//    | shared_<variable_declaration>
+//    | <file_declaration>
+//    | <alias_declaration>
+//    | <component_declaration>
+//    | <attribute_declaration>
+//    | <attribute_specification>
+//    | <disconnection_specification>
+//    | <use_clause>
+//    | <group_template_declaration>
+//    | <group_declaration>
+message PackageDeclarativeItem {
+    oneof item {
+        SubprogramDeclaration subprogDecl = 1;
+        SubprogramInstantiationDeclaration subprogInstDecl = 2;
+        PackageDeclaration pkgDecl = 3;
+        PackageInstantiationDeclaration pkgInstDecl = 4;
+        TypeDeclaration typeDecl = 5;
+        SubtypeDeclaration subtypeDecl = 6;
+        ConstantDeclaration constDecl = 7;
+        SignalDeclaration sigDecl = 8;
+        VariableDeclaration varDecl = 9;
+        FileDeclaration fileDecl = 10;
+        AliasDeclaration aliasDecl = 11;
+        ComponentDeclaration compDecl = 12;
+        AttributeDeclaration attrDecl = 13;
+        AttributeSpecification attrSpec = 14;
+        DisconnectionSpecification disconSpec = 15;
+        UseClause useClause = 16;
+        GroupTemplateDeclaration grpTmpDecl = 17;
+        GroupDeclaration grpDecl = 18;
+    }
+}
+
+// package_body ::=
+//      package body package_<simple_name> is
+//          <package_body_declarative_part>
+//      end [ package body ] [ package_simple_name ] ;
+message PackageBody {
+    required SimpleName pkgSimpleName = 1;
+    required PackageBodyDeclarativePart declPart = 2;
+}
+
+// package_body_declarative_part ::=
+//      { <package_body_declarative_item> }
+message PackageBodyDeclarativePart {
+    repeated PackageBodyDeclarativeItem items = 1;
+}
+
+// package_body_declarative_item ::=
+//      <subprogram_declaration>
+//    | <subprogram_body>
+//    | <subprogram_instantiation_declaration>
+//    | <package_declaration>
+//    | <package_body>
+//    | <package_instantiation_declaration>
+//    | <type_declaration>
+//    | <subtype_declaration>
+//    | <constant_declaration>
+//    | shared_<variable_declaration>
+//    | <file_declaration>
+//    | <alias_declaration>
+//    | <attribute_declaration>
+//    | <attribute_specification>
+//    | <use_clause>
+//    | <group_template_declaration>
+//    | <group_declaration>
+message PackageBodyDeclarativeItem {
+    oneof item {
+        SubprogramDeclaration subprogDecl = 1;
+        SubprogramBody subprogBody = 2;
+        SubprogramInstantiationDeclaration subprogInstDecl = 3;
+        PackageDeclaration pkgDecl = 4;
+        PackageBody pkgBody = 5;
+        PackageInstantiationDeclaration pkgInstDecl = 6;
+        TypeDeclaration typeDecl = 7;
+        SubtypeDeclaration subtypeDecl = 8;
+        ConstantDeclaration constDecl = 9;
+        VariableDeclaration varDecl = 10;
+        FileDeclaration fileDecl = 11;
+        AliasDeclaration aliasDecl = 12;
+        AttributeDeclaration attrDecl = 13;
+        AttributeSpecification attrSpec = 14;
+        UseClause useClause = 15;
+        GroupTemplateDeclaration grpTmpDecl = 16;
+        GroupDeclaration grpDecl = 17;
+    }
+}
+
+// package_instantiation_declaration ::=
+//      package <identifier> is
+//      new uninstantiated_package_<name>
+//      [ <generic_map_aspect> ] ;
+message PackageInstantiationDeclaration {
+    required Identifier id = 1;
+    required Name uninstPkgName = 2;
+    optional GenericMapAspect genMapAspect = 3;
+}
+
+// scalar_type_definition ::=
+//      <enumeration_type_definition>
+//    | <integer_type_definition>
+//    | <floating_type_definition>
+//    | <physical_type_definition>
+message ScalarTypeDefinition {
+    oneof typeDef {
+        EnumerationTypeDefinition enumTypeDef = 1;
+        IntegerTypeDefinition intTypeDef = 2;
+        FloatingTypeDefinition floatTypeDef = 3;
+        PhysicalTypeDefinition physTypeDef = 4;
+    }
+}
+
+// range_constraint ::= range <range>
+message RangeConstraint {
+    required Range range = 1;
+}
+
+// range ::=
+//      range_<attribute_name>
+//    | <simple_expression> <direction> <simple_expression>
+message Range {
+    message _SimpleRange {
+        required SimpleExpression left = 1;
+        required Direction direction = 2;
+        required SimpleExpression right = 3;
+    }
+    oneof range {
+        AttributeName rangeAttrName = 1;
+        _SimpleRange simpleRange = 2;
+    }
+}
+
+// direction ::= to | downto
+enum Direction {
+    TO = 0;
+    DOWNTO = 1;
+}
+
+// enumeration_type_definition ::=
+//      ( <enumeration_literal> { , <enumeration_literal> } )
+message EnumerationTypeDefinition {
+    repeated EnumerationLiteral literals = 1;
+}
+
+// enumeration_literal ::= <identifier> | <character_literal>
+message EnumerationLiteral {
+    oneof literal {
+        Identifier id = 1;
+        CharacterLiteral charLit = 2;
+    }
+}
+
+// integer_type_definition ::= <range_constraint>
+message IntegerTypeDefinition {
+    required RangeConstraint rangeConstraint = 1;
+}
+
+// physical_type_definition ::=
+//      <range_constraint>
+//      units
+//      <primary_unit_declaration>
+//      { <secondary_unit_declaration> }
+//      end units [ physical_type_simple_name ]
+message PhysicalTypeDefinition {
+    required RangeConstraint rangeConstraint = 1;
+    required PrimaryUnitDeclaration primaryUnit = 2;
+    repeated SecondaryUnitDeclaration secondaryUnits = 3;
+}
+
+// primary_unit_declaration ::= <identifier> ;
+message PrimaryUnitDeclaration {
+    required Identifier id = 1;
+}
+
+// secondary_unit_declaration ::= <identifier> = <physical_literal> ;
+message SecondaryUnitDeclaration {
+    required Identifier id = 1;
+    required PhysicalLiteral physicalLit = 2;
+}
+
+// physical_literal ::= [ <abstract_literal> ] unit_<name>
+message PhysicalLiteral {
+    optional AbstractLiteral abstractLit = 1;
+    required Name unitName = 2;
+}
+
+// floating_type_definition ::= <range_constraint>
+message FloatingTypeDefinition {
+    required RangeConstraint rangeConstraint = 1;
+}
+
+// composite_type_definition ::=
+//      <array_type_definition>
+//    | <record_type_definition>
+message CompositeTypeDefinition {
+    oneof typeDef {
+        ArrayTypeDefinition arrTypeDef = 1;
+        RecordTypeDefinition recTypeDef = 2;
+    }
+}
+
+// array_type_definition ::=
+//      <unbounded_array_definition>
+//    | <constrained_array_definition>
+message ArrayTypeDefinition {
+    oneof typeDef {
+        UnboundedArrayDefinition unboundedArrDef = 1;
+        ConstrainedArrayDefinition constrainedArrDef = 2;
+    }
+}
+
+// unbounded_array_definition ::=
+//      array ( <index_subtype_definition> { , <index_subtype_definition> } )
+//          of element_<subtype_indication>
+message UnboundedArrayDefinition {
+    repeated IndexSubtypeDefinition indexSubtypes = 1;
+    required SubtypeIndication elemSubtype = 2;
+}
+
+// constrained_array_definition ::=
+//      array <index_constraint>
+//          of element_<subtype_indication>
+message ConstrainedArrayDefinition {
+    required IndexConstraint indexConstraint = 1;
+    required SubtypeIndication elemSubtype = 2;
+}
+
+// index_subtype_definition ::= <type_mark> range <>
+message IndexSubtypeDefinition {
+    required TypeMark typeMark = 1;
+}
+
+// array_constraint ::=
+//      <index_constraint> [ <array_element_constraint> ]
+//    | ( open ) [ <array_element_constraint> ]
+message ArrayConstraint {
+    oneof constraint {
+        IndexConstraint indexConstraint = 1;
+        bool openConstraint = 2;
+    }
+    optional ArrayElementConstraint elemConstraint = 3;
+}
+
+// array_element_constraint ::= >element_constraint>
+message ArrayElementConstraint {
+    required ElementConstraint elemConstraint = 1;
+}
+
+// index_constraint ::= ( <discrete_range> { , <discrete_range> } )
+message IndexConstraint {
+    repeated DiscreteRange discRanges = 1;
+}
+
+// discrete_range ::=
+//      discrete_<subtype_indication>
+//    | <range>
+message DiscreteRange {
+    oneof discRange {
+        SubtypeIndication discSubtype = 1;
+        Range range = 2;
+    }
+}
+
+// record_type_definition ::=
+//      record
+//            <element_declaration>
+//          { <element_declaration> }
+//      end record [ record_type_simple_name ]
+message RecordTypeDefinition {
+    repeated ElementDeclaration elems = 1;
+}
+
+// element_declaration ::=
+//      <identifier_list> : <element_subtype_definition> ;
+message ElementDeclaration {
+    required IdentifierList idList = 1;
+    required ElementSubtypeDefinition elemSubtypeDef = 2;
+}
+
+// identifier_list ::= <identifier> { , <identifier> }
+message IdentifierList {
+    repeated Identifier ids = 1;
+}
+
+// element_subtype_definition ::= <subtype_indication>
+message ElementSubtypeDefinition {
+    required SubtypeIndication subtypeInd = 1;
+}
+
+// record_constraint ::=
+//      ( <record_element_constraint> { , <record_element_constraint> } )
+message RecordConstraint {
+    repeated RecordElementConstraint elemConstraints = 1;
+}
+
+// record_element_constraint ::= record_element_<simple_name> <element_constraint>
+message RecordElementConstraint {
+    required SimpleName elemSimpleName = 1;
+    required ElementConstraint elemConstraint = 2;
+}
+
+// access_type_definition ::= access <subtype_indication> [ <generic_map_aspect> ]
+message AccessTypeDefinition {
+    required SubtypeIndication subtypeInd = 1;
+    optional GenericMapAspect genMapAspect = 2;
+}
+
+// incomplete_type_declaration ::= type <identifier> ;
+message IncompleteTypeDeclaration {
+    required Identifier id = 1;
+}
+
+// file_type_definition ::= file of <type_mark>
+message FileTypeDefinition {
+    required TypeMark typeMark = 1;
+}
+
+// protected_type_definition ::=
+//      <protected_type_declaration>
+//    | <protected_type_body>
+message ProtectedTypeDefinition {
+    oneof typeDef {
+        ProtectedTypeDeclaration decl = 1;
+        ProtectedTypeBody body = 2;
+    }
+}
+
+// protected_type_declaration ::=
+//      protected
+//          <protected_type_declarative_part>
+//      end protected [ protected_type_<simple_name> ]
+message ProtectedTypeDeclaration {
+    required ProtectedTypeDeclarativePart declPart = 1;
+}
+
+// protected_type_declarative_part ::=
+//      { <protected_type_declarative_item> }
+message ProtectedTypeDeclarativePart {
+    repeated ProtectedTypeDeclarativeItem items = 1;
+}
+
+// protected_type_declarative_item ::=
+//      <subprogram_declaration>
+//    | <subprogram_instantiation_declaration>
+//    | <attribute_specification>
+//    | <use_clause>
+message ProtectedTypeDeclarativeItem {
+    oneof item {
+        SubprogramDeclaration subprogDecl = 1;
+        SubprogramInstantiationDeclaration subprogInstDecl = 2;
+        AttributeSpecification attrSpec = 3;
+        UseClause useClause = 4;
+    }
+}
+
+// protected_type_body ::=
+//      protected body
+//          <protected_type_body_declarative_part>
+//      end protected body [ protected_type_simple name ]
+message ProtectedTypeBody {
+    required ProtectedTypeBodyDeclarativePart declPart = 1;
+}
+
+// protected_type_body_declarative_part ::=
+//      { <protected_type_body_declarative_item> }
+message ProtectedTypeBodyDeclarativePart {
+    repeated ProtectedTypeBodyDeclarativeItem items = 1;
+}
+
+// protected_type_body_declarative_item ::=
+//      <subprogram_declaration>
+//    | <subprogram_body>
+//    | <subprogram_instantiation_declaration>
+//    | <package_declaration>
+//    | <package_body>
+//    | <package_instantiation_declaration>
+//    | <type_declaration>
+//    | <subtype_declaration>
+//    | <constant_declaration>
+//    | <variable_declaration>
+//    | <file_declaration>
+//    | <alias_declaration>
+//    | <attribute_declaration>
+//    | <attribute_specification>
+//    | <use_clause>
+//    | <group_template_declaration>
+//    | <group_declaration>
+message ProtectedTypeBodyDeclarativeItem {
+    oneof item {
+        SubprogramDeclaration subprogDecl = 1;
+        SubprogramBody subprogBody = 2;
+        SubprogramInstantiationDeclaration subprogInstDecl = 3;
+        PackageDeclaration pkgDecl = 4;
+        PackageBody pkgBody = 5;
+        PackageInstantiationDeclaration pkgInstDecl = 6;
+        TypeDeclaration typeDecl = 7;
+        SubtypeDeclaration subtypeDecl = 8;
+        ConstantDeclaration constDecl = 9;
+        VariableDeclaration varDecl = 10;
+        FileDeclaration fileDecl = 11;
+        AliasDeclaration aliasDecl = 12;
+        AttributeDeclaration attrDecl = 13;
+        AttributeSpecification attrSpec = 14;
+        UseClause useClause = 15;
+        GroupTemplateDeclaration grpTmpDecl = 16;
+        GroupDeclaration grpDecl = 17;
+    }
+}
+
+// type_declaration ::=
+//      <full_type_declaration>
+//    | <incomplete_type_declaration>
+message TypeDeclaration {
+    oneof decl {
+        FullTypeDeclaration fullTypeDecl = 1;
+        IncompleteTypeDeclaration incompleteTypeDecl = 2;
+    }
+}
+
+// full_type_declaration ::=
+//      type <identifier> is <type_definition> ;
+message FullTypeDeclaration {
+    required Identifier id = 1;
+    required TypeDefinition typeDef = 2;
+}
+
+// type_definition ::=
+//      <scalar_type_definition>
+//    | <composite_type_definition>
+//    | <access_type_definition>
+//    | <file_type_definition>
+//    | <protected_type_definition>
+message TypeDefinition {
+    oneof def {
+        ScalarTypeDefinition scalarTypeDef = 1;
+        CompositeTypeDefinition compositeTypeDef = 2;
+        AccessTypeDefinition accessTypeDef = 3;
+        FileTypeDefinition fileTypeDef = 4;
+        ProtectedTypeDefinition protectedTypeDef = 5;
+    }
+}
+
+// subtype_declaration ::=
+//      subtype <identifier> is <subtype_indication> ;
+message SubtypeDeclaration {
+    required Identifier id = 1;
+    required SubtypeIndication subtypeInd = 2;
+}
+
+// subtype_indication ::=
+//      [ <resolution_indication> ] <type_mark> [ <constraint> ]
+message SubtypeIndication {
+    optional ResolutionIndication resolutionInd = 1;
+    required TypeMark typeMark = 2;
+    optional Constraint constraint = 3;
+}
+
+// resolution_indication ::=
+//      resolution_function_<name>
+//    | ( <element_resolution> )
+message ResolutionIndication {
+    oneof indication {
+        Name resolutionFuncName = 1;
+        ElementResolution elemResolution = 2;
+    }
+}
+
+// element_resolution ::= <array_element_resolution> | <record_resolution>
+message ElementResolution {
+    oneof resolution {
+        ArrayElementResolution arrElemResolution = 1;
+        RecordResolution recResolution = 2;
+    }
+}
+
+// array_element_resolution ::= <resolution_indication>
+message ArrayElementResolution {
+    required ResolutionIndication resolutionInd = 1;
+}
+
+// record_resolution ::= <record_element_resolution> { , <record_element_resolution> }
+message RecordResolution {
+    repeated RecordElementResolution elemResolutions = 1;
+}
+
+// record_element_resolution ::= record_element_<simple_name> <resolution_indication>
+message RecordElementResolution {
+    required SimpleName elemSimpleName = 1;
+    required ResolutionIndication resolutionInd = 2;
+}
+
+// type_mark ::=
+//      type_<name>
+//    | subtype_<name>
+message TypeMark {
+    oneof mark {
+        Name typeName = 1;
+        Name subtypeName = 2;
+    }
+}
+
+// constraint ::=
+//      <range_constraint>
+//    | <array_constraint>
+//    | <record_constraint>
+message Constraint {
+    oneof constraint {
+        RangeConstraint rangeConstraint = 1;
+        ArrayConstraint arrConstraint = 2;
+        RecordConstraint recConstraint = 3;
+    }
+}
+
+// element_constraint ::=
+//      <array_constraint>
+//    | <record_constraint>
+message ElementConstraint {
+    oneof constraint {
+        ArrayConstraint arrConstraint = 1;
+        RecordConstraint recConstraint = 2;
+    }
+}
+
+// object_declaration ::=
+//      <constant_declaration>
+//    | <signal_declaration>
+//    | <variable_declaration>
+//    | <file_declaration>
+message ObjectDeclaration {
+    oneof decl {
+        ConstantDeclaration constDecl = 1;
+        SignalDeclaration sigDecl = 2;
+        VariableDeclaration varDecl = 3;
+        FileDeclaration fileDecl = 4;
+    }
+}
+
+// constant_declaration ::=
+//      constant <identifier_list> : <subtype_indication> [ := <expression> ] ;
+message ConstantDeclaration {
+    required IdentifierList idList = 1;
+    required SubtypeIndication subtypeInd = 2;
+    optional Expression initExpr = 3;
+}
+
+// signal_declaration ::=
+//      signal <identifier_list> : <subtype_indication> [ <signal_kind> ]
+//          [ := <expression> ] ;
+message SignalDeclaration {
+    required IdentifierList idList = 1;
+    required SubtypeIndication subtypeInd = 2;
+    optional SignalKind kind = 3;
+    optional Expression initExpr = 4;
+}
+
+// signal_kind ::= register | bus
+enum SignalKind {
+    REGISTER = 0;
+    BUS = 1;
+}
+
+// variable_declaration ::=
+//      [ shared ] variable <identifier_list> : <subtype_indication>
+//          [ := <expression> ] ;
+message VariableDeclaration {
+    optional bool shared = 1 [default = false];
+    required IdentifierList idList = 2;
+    required SubtypeIndication subtypeInd = 3;
+    optional Expression initExpr = 4;
+}
+
+// file_declaration ::=
+//      file <identifier_list> : <subtype_indication> [ <file_open_information> ] ;
+message FileDeclaration {
+    required IdentifierList idList = 1;
+    required SubtypeIndication subtypeInd = 2;
+    optional FileOpenInformation fileOpenInfo = 3;
+}
+
+// file_open_information ::= [ open file_open_kind_<expression> ] is <file_logical_name>
+message FileOpenInformation {
+    optional Expression openKind = 1;
+    required FileLogicalName logicalName = 2;
+}
+
+// file_logical_name ::= string_<expression>
+message FileLogicalName {
+    required Expression expr = 1;
+}
+
+// interface_declaration ::=
+//      <interface_object_declaration>
+//    | <interface_type_declaration>
+//    | <interface_subprogram_declaration>
+//    | <interface_package_declaration>
+message InterfaceDeclaration {
+    oneof decl {
+        InterfaceObjectDeclaration objDecl = 1;
+        InterfaceTypeDeclaration typeDecl = 2;
+        InterfaceSubprogramDeclaration subprogDecl = 3;
+        InterfacePackageDeclaration pkgDecl = 4;
+    }
+}
+
+// interface_object_declaration ::=
+//      <interface_constant_declaration>
+//    | <interface_signal_declaration>
+//    | <interface_variable_declaration>
+//    | <interface_file_declaration>
+message InterfaceObjectDeclaration {
+    oneof decl {
+        InterfaceConstantDeclaration constDecl = 1;
+        InterfaceSignalDeclaration sigDecl = 2;
+        InterfaceVariableDeclaration varDecl = 3;
+        InterfaceFileDeclaration fileDecl = 4;
+    }
+}
+
+// interface_constant_declaration ::=
+//      [ constant ] <identifier_list> : [ in ] <subtype_indication>
+//          [ := static_<expression> ]
+message InterfaceConstantDeclaration {
+    optional bool isConstant = 1 [default = false];
+    required IdentifierList idList = 2;
+    optional bool isIn = 3 [default = false];
+    required SubtypeIndication typeInd = 4;
+    optional Expression initExpr = 5;
+}
+
+// interface_signal_declaration ::=
+//      [ signal ] <identifier_list> : [ <mode> ] <subtype_indication> [ bus ]
+//          [ := static_<expression> ]
+message InterfaceSignalDeclaration {
+    optional bool isSignal = 1 [default = false];
+    required IdentifierList idList = 2;
+    optional Mode mode = 3;
+    required SubtypeIndication typeInd = 4;
+    optional bool isBus = 5 [default = false];
+    optional Expression initExpr = 6;
+}
+
+// interface_variable_declaration ::=
+//      [ variable ] <identifier_list> : [ <mode> ] <subtype_indication>
+//          [ := static_<expression> ]
+message InterfaceVariableDeclaration {
+    optional bool isVariable = 1 [default = false];
+    required IdentifierList idList = 2;
+    optional Mode mode = 3;
+    required SubtypeIndication typeInd = 4;
+    optional Expression initExpr = 5;
+}
+
+// interface_file_declaration ::=
+//      file <identifier_list> : <subtype_indication>
+message InterfaceFileDeclaration {
+    required IdentifierList idList = 1;
+    required SubtypeIndication subtypeInd = 2;
+}
+
+// mode ::= in | out | inout | buffer | linkage
+enum Mode {
+    IN = 0;
+    OUT = 1;
+    INOUT = 2;
+    BUFFER = 3;
+    LINKAGE = 4;
+}
+
+// interface_type_declaration ::=
+//      <interface_incomplete_type_declaration>
+message InterfaceTypeDeclaration {
+    required InterfaceIncompleteTypeDeclaration incompleteTypeDecl = 1;
+}
+
+// interface_incomplete_type_declaration ::= type <identifier>
+message InterfaceIncompleteTypeDeclaration {
+    required Identifier id = 1;
+}
+
+// interface_subprogram_declaration ::=
+//      <interface_subprogram_specification> [ is <interface_subprogram_default> ]
+message InterfaceSubprogramDeclaration {
+    required InterfaceSubprogramSpecification spec = 1;
+    optional InterfaceSubprogramDefault defaultVal = 2;
+}
+
+// interface_subprogram_specification ::=
+//      <interface_procedure_specification> | <interface_function_specification>
+message InterfaceSubprogramSpecification {
+    oneof spec {
+        InterfaceProcedureSpecification procSpec = 1;
+        InterfaceFunctionSpecification funcSpec = 2;
+    }
+}
+
+// interface_procedure_specification ::=
+//      procedure <identifier>
+//          [ [ parameter ] ( <formal_parameter_list> ) ]
+message InterfaceProcedureSpecification {
+    required Identifier id = 1;
+    optional FormalParameterList paramList = 2;
+}
+
+// interface_function_specification ::=
+//      [ pure | impure ] function <designator>
+//          [ [ parameter ] ( <formal_parameter_list> ) ] return <type_mark>
+message InterfaceFunctionSpecification {
+    enum Purity {
+        PURE = 0;
+        IMPURE = 1;
+    }
+    optional Purity purity = 1;
+    required Designator designator = 2;
+    optional FormalParameterList paramList = 3;
+    required TypeMark typeMark = 4;
+}
+
+// interface_subprogram_default ::= <subprogram_name> | <>
+message InterfaceSubprogramDefault {
+    oneof defaultVal {
+        Name subprogramName = 1;
+        bool box = 2; // <>
+    }
+}
+
+// interface_package_declaration ::=
+//      package <identifier> is new uninstantiated_package_<name>
+//          <interface_package_generic_map_aspect>
+message InterfacePackageDeclaration {
+    required Identifier id = 1;
+    required Name uninstPkgName = 2;
+    required InterfacePackageGenericMapAspect genMapAspect = 3;
+}
+
+// interface_package_generic_map_aspect ::=
+//      <generic_map_aspect>
+//    | generic map ( <> )
+//    | generic map ( default )
+message InterfacePackageGenericMapAspect {
+    oneof aspect {
+        GenericMapAspect genericMapAspect = 1;
+        bool box = 2;
+        bool default_ = 3;
+    }
+}
+
+// interface_list ::=
+//      <interface_element> { ; <interface_element> }
+message InterfaceList {
+    repeated InterfaceElement elements = 1;
+}
+
+// interface_element ::= <interface_declaration>
+message InterfaceElement {
+    required InterfaceDeclaration decl = 1;
+}
+
+// generic_clause ::=
+//      generic ( <generic_list> ) ;
+message GenericClause {
+    required GenericList genList = 1;
+}
+
+// generic_list ::= generic_<interface_list>
+message GenericList {
+    required InterfaceList list = 1;
+}
+
+// port_clause ::=
+//      port ( <port_list> ) ;
+message PortClause {
+    required PortList portList = 1;
+}
+
+// port_list ::= port_<interface_list>
+message PortList {
+    required InterfaceList list = 1;
+}
+
+// association_list ::=
+//      <association_element> { , <association_element> }
+message AssociationList {
+    repeated AssociationElement elements = 1;
+}
+
+// association_element ::=
+//      [ <formal_part> => ] <actual_part>
+message AssociationElement {
+    optional FormalPart formal = 1;
+    required ActualPart actual = 2;
+}
+
+// formal_part ::=
+//      <formal_designator>
+//    | function_<name> ( <formal_designator> )
+//    | <type_mark> ( <formal_designator> )
+message FormalPart {
+    required FormalDesignator formalDesignator = 1;
+    oneof part {
+        bool designatorOnly = 2;
+        Name functionName = 3;
+        TypeMark typeMark = 4;
+    }
+}
+
+// formal_designator ::=
+//      generic_<name>
+//    | port_<name>
+//    | parameter_<name>
+message FormalDesignator {
+    required Name formalName = 1;
+    oneof designator {
+        bool isGeneric = 2;
+        bool isPort = 3;
+        bool isParam = 4;
+    }
+}
+
+// actual_part ::=
+//      <actual_designator>
+//    | function_<name> ( <actual_designator> )
+//    | <type_mark> ( <actual_designator> )
+message ActualPart {
+    required ActualDesignator actualDesignator = 1;
+    oneof part {
+        bool designatorOnly = 2;
+        Name functionName = 3;
+        TypeMark typeMark = 4;
+    }
+}
+
+// actual_designator ::=
+//      [ inertial ] <expression>
+//    | signal_<name>
+//    | variable_<name>
+//    | file_<name>
+//    | <subtype_indication>
+//    | subprogram_<name>
+//    | instantiated_package_<name>
+//    | open
+message ActualDesignator {
+    oneof designator {
+        Expression expr = 1; // ToDo: support "inertial"
+        Name signalName = 2;
+        Name variableName = 3;
+        Name fileName = 4;
+        SubtypeIndication subtypeInd = 5;
+        Name subprogramName = 6;
+        Name instantiatedPkgName = 7;
+        bool open = 8;
+    }
+}
+
+// generic_map_aspect ::=
+//      generic map ( generic_<association_list> )
+message GenericMapAspect {
+    required AssociationList assocList = 1;
+}
+
+// port_map_aspect ::=
+//      port map ( port_<association_list> )
+message PortMapAspect {
+    required AssociationList assocList = 1;
+}
+
+// alias_declaration ::=
+//      alias <alias_designator> [ : <subtype_indication> ] is <name> [ <signature> ];
+message AliasDeclaration {
+    required AliasDesignator aliasDesignator = 1;
+    optional SubtypeIndication subtypeInd = 2;
+    required Name name = 3;
+    optional Signature signature = 4;
+}
+
+// alias_designator ::= <identifier> | <character_literal> | <operator_symbol>
+message AliasDesignator {
+    oneof designator {
+        Identifier id = 1;
+        CharacterLiteral charLit = 2;
+        OperatorSymbol opSymbol = 3;
+    }
+}
+
+// attribute_declaration ::=
+//      attribute <identifier> : <type_mark> ;
+message AttributeDeclaration {
+    required Identifier id = 1;
+    required TypeMark typeMark = 2;
+}
+
+// component_declaration ::=
+//      component <identifier> [ is ]
+//          [ local_<generic_clause> ]
+//          [ local_<port_clause> ]
+//      end component [ component_simple_name ] ;
+message ComponentDeclaration {
+    required Identifier id = 1;
+    optional GenericClause genClause = 2;
+    optional PortClause portClause = 3;
+}
+
+// group_template_declaration ::=
+//      group <identifier> is ( <entity_class_entry_list> ) ;
+message GroupTemplateDeclaration {
+    required Identifier id = 1;
+    required EntityClassEntryList entityClassEntries = 2;
+}
+
+// entity_class_entry_list ::=
+//      <entity_class_entry> { , <entity_class_entry> }
+message EntityClassEntryList {
+    repeated EntityClassEntry entries = 1;
+}
+
+// entity_class_entry ::= <entity_class> [ <> ]
+message EntityClassEntry {
+    required EntityClass entityClass = 1;
+    optional bool box = 2; // <>
+}
+
+// group_declaration ::=
+//      group <identifier> : group_template_<name> ( <group_constituent_list> ) ;
+message GroupDeclaration {
+    required Identifier id = 1;
+    required Name groupTemplateName = 2;
+    required GroupConstituentList groupConstituents = 3;
+}
+
+// group_constituent_list ::=
+//      <group_constituent> { , <group_constituent> }
+message GroupConstituentList {
+    repeated GroupConstituent constituents = 1;
+}
+
+// group_constituent ::= <name> | <character_literal>
+message GroupConstituent {
+    oneof constituent {
+        Name name = 1;
+        CharacterLiteral charLit = 2;
+    }
+}
+
+// attribute_specification ::=
+//      attribute <attribute_designator> of <entity_specification> is <expression> ;
+message AttributeSpecification {
+    required AttributeDesignator attrDesignator = 1;
+    required EntitySpecification entitySpec = 2;
+    required Expression expr = 3;
+}
+
+// entity_specification ::= <entity_name_list> : <entity_class>
+message EntitySpecification {
+    required EntityNameList entityNames = 1;
+    required EntityClass entityClass = 2;
+}
+
+// entity_class ::=
+//      entity
+//    | architecture
+//    | configuration
+//    | procedure
+//    | function
+//    | package
+//    | type
+//    | subtype
+//    | constant
+//    | signal
+//    | variable
+//    | component
+//    | label
+//    | literal
+//    | units
+//    | group
+//    | file
+enum EntityClass {
+    cENTITY = 0;
+    cARCHITECTURE = 1;
+    cCONFIGURATION = 2;
+    cPROCEDURE = 3;
+    cFUNCTION = 4;
+    cPACKAGE = 5;
+    cTYPE = 6;
+    cSUBTYPE = 7;
+    cCONSTANT = 8;
+    cSIGNAL = 9;
+    cVARIABLE = 10;
+    cCOMPONENT = 11;
+    cLABEL = 12;
+    cLITERAL = 13;
+    cUNITS = 14;
+    cGROUP = 15;
+    cFILE = 16;
+}
+
+// entity_name_list ::=
+//      <entity_designator> { , <entity_designator> }
+//    | others
+//    | all
+message EntityNameList {
+    message _EntityDesignatorList {
+        repeated EntityDesignator designators = 1;
+    }
+    oneof names {
+        _EntityDesignatorList designators = 1;
+        bool others = 2;
+        bool all = 3;
+    }
+}
+
+// entity_designator ::= <entity_tag> [ <signature> ]
+message EntityDesignator {
+    required EntityTag tag = 1;
+    optional Signature signature = 2;
+}
+
+// entity_tag ::= <simple_name> | <character_literal> | <operator_symbol>
+message EntityTag {
+    oneof tag {
+        SimpleName simpleName = 1;
+        CharacterLiteral charLit = 2;
+        OperatorSymbol opSymbol = 3;
+    }
+}
+
+// configuration_specification ::=
+//      <simple_configuration_specification>
+//    | <compound_configuration_specification>
+message ConfigurationSpecification {
+    oneof spec {
+        SimpleConfigurationSpecification simpleConfigSpec = 1;
+        CompoundConfigurationSpecification compoundConfigSpec = 2;
+    }
+}
+
+// simple_configuration_specification ::=
+//      for <component_specification> <binding_indication> ;
+//          [ end for ; ]
+message SimpleConfigurationSpecification {
+    required ComponentSpecification compSpec = 1;
+    required BindingIndication bindingInd = 2;
+}
+
+// compound_configuration_specification ::=
+//      for <component_specification> <binding_indication> ;
+//      end for ;
+message CompoundConfigurationSpecification {
+    required ComponentSpecification compSpec = 1;
+    required BindingIndication bindingInd = 2;
+}
+
+// omponent_specification ::=
+//      <instantiation_list> : component_<name>
+message ComponentSpecification {
+    required InstantiationList instList = 1;
+    required Name compName = 2;
+}
+
+// instantiation_list ::=
+//      instantiation_<label> { , instantiation_<label> }
+//    | others
+//    | all
+message InstantiationList {
+    message _InstantiationLabelList {
+        repeated Label labels = 1;
+    }
+    oneof list {
+        _InstantiationLabelList labelList = 1;
+        bool others = 2;
+        bool all = 3;
+    }
+}
+
+// binding_indication ::=
+//      [ use <entity_aspect> ]
+//      [ <generic_map_aspect> ]
+//      [ <port_map_aspect> ]
+message BindingIndication {
+    optional EntityAspect entityAspect = 1;
+    optional GenericMapAspect genMapAspect = 2;
+    optional PortMapAspect portMapAspect = 3;
+}
+
+// entity_aspect ::=
+//      entity entity_<name> [ ( architecture_<identifier> ) ]
+//    | configuration configuration_<name>
+//    | open
+message EntityAspect {
+    message _EntityAspectEntity {
+        required Name entName = 1;
+        optional Identifier archId = 2;
+    }
+    oneof aspect {
+        _EntityAspectEntity entity = 1;
+        Name configName = 2;
+        bool open = 3;
+    }
+}
+
+// disconnection_specification ::=
+//      disconnect <guarded_signal_specification> after time_<expression> ;
+message DisconnectionSpecification {
+    required GuardedSignalSpecification guardedSigSpec = 1;
+    required Expression timeExpr = 2;
+}
+
+// guarded_signal_specification ::=
+//      guarded_<signal_list> : <type_mark>
+message GuardedSignalSpecification {
+    required SignalList sigList = 1;
+    required TypeMark typeMark = 2;
+}
+
+// signal_list ::=
+//      signal_<name> { , signal_<name> }
+//    | others
+//    | all
+message SignalList {
+    message _SignalNameList {
+        repeated Name names = 1;
+    }
+    oneof list {
+        _SignalNameList nameList = 1;
+        bool others = 2;
+        bool all = 3;
+    }
+}
+
+// name ::=
+//      <simple_name>
+//    | <operator_symbol>
+//    | <character_literal>
+//    | <selected_name>
+//    | <indexed_name>
+//    | <slice_name>
+//    | <attribute_name>
+//    | <external_name>
+message Name {
+    oneof name {
+        SimpleName simpleName = 1;
+        OperatorSymbol opSymbol = 2;
+        CharacterLiteral charLit = 3;
+        SelectedName selectedName = 4;
+        IndexedName indexedName = 5;
+        SliceName sliceName = 6;
+        AttributeName attributeName = 7;
+        ExternalName externalName = 8;
+    }
+}
+
+// prefix ::=
+//      <name>
+//    | <function_call>
+message Prefix {
+    oneof prefix {
+        Name name = 1;
+        FunctionCall functionCall = 2;
+    }
+}
+
+// simple_name ::= <identifier>
+message SimpleName {
+    required Identifier id = 1;
+}
+
+// selected_name ::= <prefix> . <suffix>
+message SelectedName {
+    required Prefix prefix = 1;
+    required Suffix suffix = 2;
+}
+
+// suffix ::=
+//      <simple_name>
+//    | <character_literal>
+//    | <operator_symbol>
+//    | all
+message Suffix {
+    oneof suffix {
+        SimpleName simpleName = 1;
+        CharacterLiteral charLit = 2;
+        OperatorSymbol opSymbol = 3;
+        bool all = 4;
+    }
+}
+
+// indexed_name ::= prefix ( <expression> { , <expression> } )
+message IndexedName {
+    required Prefix prefix = 1;
+    repeated Expression exprs = 2;
+}
+
+// slice_name ::= <prefix> ( <discrete_range> )
+message SliceName {
+    required Prefix prefix = 1;
+    required DiscreteRange discRange = 2;
+}
+
+// attribute_name ::=
+//      <prefix> [ <signature> ] ' <attribute_designator> [ ( <expression> ) ]
+message AttributeName {
+    required Prefix prefix = 1;
+    optional Signature signature = 2;
+    required AttributeDesignator attrDesignator = 3;
+    optional Expression expr = 4;
+}
+
+// attribute_designator ::= attribute_<simple_name>
+message AttributeDesignator {
+    required SimpleName simpleName = 1;
+}
+
+// external_name ::=
+//      <external_constant_name>
+//    | <external_signal_name>
+//    | <external_variable_name>
+message ExternalName {
+    oneof name {
+        ExternalConstantName extConstName = 1;
+        ExternalSignalName extSignalName = 2;
+        ExternalVariableName extVarName = 3;
+    }
+}
+
+// external_constant_name ::=
+//      << constant <external_pathname> : <subtype_indication> >>
+message ExternalConstantName {
+    required ExternalPathname pathname = 1;
+    required SubtypeIndication typeInd = 2;
+}
+
+// external_signal_name ::=
+//      << signal <external_pathname> : <subtype_indication> >>
+message ExternalSignalName {
+    required ExternalPathname pathname = 1;
+    required SubtypeIndication typeInd = 2;
+}
+
+// external_variable_name ::=
+//      << variable <external_pathname> : <subtype_indication> >>
+message ExternalVariableName {
+    required ExternalPathname pathname = 1;
+    required SubtypeIndication typeInd = 2;
+}
+
+// external_pathname ::=
+//      <package_pathname>
+//    | <absolute_pathname>
+//    | <relative_pathname>
+message ExternalPathname {
+    oneof pathname {
+        PackagePathname pkgPathname = 1;
+        AbsolutePathname absPathname = 2;
+        RelativePathname relPathname = 3;
+    }
+}
+
+// package_pathname ::=
+//      @ library_<logical_name> . package_<simple_name> . { package_<simple_name> . } object_<simple_name>
+message PackagePathname {
+    required LogicalName libraryName = 1;
+    repeated SimpleName packageNames = 2;
+    required SimpleName objectName = 3;
+}
+
+// absolute_pathname ::= . <partial_pathname>
+message AbsolutePathname {
+    required PartialPathname partialPathname = 1;
+}
+
+// relative_pathname ::= { ^ . } <partial_pathname>
+message RelativePathname {
+    repeated bool up = 1; // each '^.' is an entry
+    required PartialPathname partialPathname = 2;
+}
+
+// partial_pathname ::= { <pathname_element> . } object_<simple_name>
+message PartialPathname {
+    repeated PathnameElement elements = 1;
+    required SimpleName objectName = 2;
+}
+
+// pathname_element ::=
+//      entity_<simple_name>
+//    | component_instantiation_<label>
+//    | block_<label>
+//    | generate_statement_<label> [ ( static_<expression> ) ]
+//    | package_<simple_name>
+message PathnameElement {
+    message _GenerateStatementLabel {
+        required Label label = 1;
+        optional Expression staticExpr = 2;
+    }
+    oneof element {
+        SimpleName entityName = 1;
+        Label compInstLabel = 2;
+        Label blockLabel = 3;
+        _GenerateStatementLabel genStatement = 4;
+        SimpleName pkgeName = 5;
+    }
+}
+
+// expression ::=
+//      <condition_operator> <primary>
+//    | <logical_expression>
+message Expression {
+    message _ConditionOperatorExpr {
+        required ConditionOperator op = 1;
+        required Primary primary = 2;
+    }
+    oneof expr {
+        _ConditionOperatorExpr condOpExpr = 1;
+        LogicalExpression logicalExpr = 2;
+    }
+}
+
+// logical_expression ::=
+//      <relation> { and <relation> }
+//      <relation> { or <relation> }
+//      <relation> { xor <relation> }
+//      <relation> { nand <relation> }
+//      <relation> { nor <relation> }
+//      <relation> { xnor <relation> }
+message LogicalExpression {
+    enum _Mode {
+        AND = 0;
+        OR = 1;
+        XOR = 2;
+        NAND = 3;
+        NOR = 4;
+        XNOR = 5;
+    }
+    optional _Mode mode = 1;
+    repeated Relation relations = 2;
+}
+
+// relation ::=
+//      <shift_expression> [ <relational_operator> <shift_expression> ]
+message Relation {
+    message _RelationalShiftExpression {
+        required RelationalOperator op = 1;
+        required ShiftExpression expr = 2;
+    }
+    required ShiftExpression left = 1;
+    optional _RelationalShiftExpression right = 3;
+}
+
+// shift_expression ::=
+//      <simple_expression> [ <shift_operator> <simple_expression> ]
+message ShiftExpression {
+    message _ShiftSimpleExpression {
+        required ShiftOperator op = 1;
+        required SimpleExpression expr = 2;
+    }
+    required SimpleExpression left = 1;
+    optional _ShiftSimpleExpression right = 2;
+}
+
+// simple_expression ::=
+//      [ <sign> ] <term> { <adding_operator> <term> }
+message SimpleExpression {
+    message _AddingOperatorTerm {
+        required AddingOperator op = 1;
+        required Term term = 2;
+    }
+    optional Sign sign = 1;
+    required Term term = 2;
+    repeated _AddingOperatorTerm addingTerms = 3;
+}
+
+// term ::=
+//      <factor> { <multiplying_operator> <factor> }
+message Term {
+    message _MultiplyingOperatorFactor {
+        required MultiplyingOperator op = 1;
+        required Factor factor = 2;
+    }
+    required Factor factor = 1;
+    repeated _MultiplyingOperatorFactor multiplyingFactors = 2;
+}
+
+// factor ::=
+//      <primary> [ ** <primary> ]
+//    | abs <primary>
+//    | not <primary>
+//    | <logical_operator> <primary>
+message Factor {
+    message _SimpleUnary {
+        optional Primary primaryExp = 1;
+    }
+    required Primary primary = 1;
+    oneof unary {
+        _SimpleUnary simpUnary = 2;
+        bool isAbs = 3;
+        bool isNot = 4;
+        LogicalOperator logicOp = 5;
+    }
+}
+
+// primary ::=
+//      <name>
+//    | <literal>
+//    | <aggregate>
+//    | <function_call>
+//    | <qualified_expression>
+//    | <type_conversion>
+//    | <allocator>
+//    | ( <expression> )
+message Primary {
+    oneof primary {
+        Name name = 1;
+        Literal literal = 2;
+        Aggregate aggregate = 3;
+        FunctionCall funcCall = 4;
+        QualifiedExpression qualifiedExpr = 5;
+        TypeConversion typeConversion = 6;
+        Allocator allocator = 7;
+        Expression expr = 8;
+    }
+}
+
+// condition_operator ::= ??
+message ConditionOperator {}
+
+// ogical_operator ::= and | or | nand | nor | xor | xnor
+enum LogicalOperator {
+    AND = 0;
+    OR = 1;
+    NAND = 2;
+    NOR = 3;
+    XOR = 4;
+    XNOR = 5;
+}
+
+// relational_operator ::= = | /= | < | <= | > | >= | ?= | ?/= | ?< | ?<= | ?> | ?>=
+enum RelationalOperator {
+    EQ = 0;
+    NEQ = 1;
+    LT = 2;
+    LTE = 3;
+    GT = 4;
+    GTE = 5;
+    QUEST_EQ = 6;
+    QUEST_NEQ = 7;
+    QUEST_LT = 8;
+    QUEST_LTE = 9;
+    QUEST_GT = 10;
+    QUEST_GTE = 11;
+}
+
+// shift_operator ::= sll | srl | sla | sra | rol | ror
+enum ShiftOperator {
+    SLL = 0;
+    SRL = 1;
+    SLA = 2;
+    SRA = 3;
+    ROL = 4;
+    ROR = 5;
+}
+
+// adding_operator ::= + | – | &
+enum AddingOperator {
+    aPLUS = 0;
+    aMINUS = 1;
+    aAMP = 2;
+}
+
+// sign ::= + | –
+enum Sign {
+    PLUS = 0;
+    MINUS = 1;
+}
+
+// multiplying_operator ::= * | / | mod | rem
+enum MultiplyingOperator {
+    MUL = 0;   // *
+    DIV = 1;   // /
+    MOD = 2;   // mod
+    REM = 3;   // rem
+}
+
+// miscellaneous_operator ::= ** | abs | not
+enum MiscellaneousOperator {
+    EXP = 0;   // **
+    ABS = 1;   // abs
+    NOT = 2;   // not
+}
+
+// literal ::=
+//      <numeric_literal>
+//    | <enumeration_literal>
+//    | <string_literal>
+//    | <bit_string_literal>
+//    | null
+message Literal {
+    oneof literal {
+        NumericLiteral numericLit = 1;
+        EnumerationLiteral enumerationLit = 2;
+        StringLiteral stringLit = 3;
+        BitStringLiteral bitStringLit = 4;
+        bool isNull = 5;
+    }
+}
+
+// numeric_literal ::=
+//      <abstract_literal>
+//    | <physical_literal>
+message NumericLiteral {
+    oneof literal {
+        AbstractLiteral abstractLit = 1;
+        PhysicalLiteral physicalLit = 2;
+    }
+}
+
+// aggregate ::=
+//      ( <element_association> { , <element_association> } )
+message Aggregate {
+    repeated ElementAssociation elementAssociations = 1;
+}
+
+// element_association ::=
+//      [ <choices> => ] <expression>
+message ElementAssociation {
+    optional Choices choices = 1;
+    required Expression expr = 2;
+}
+
+// choices ::= <choice> { | <choice> }
+message Choices {
+    repeated Choice choices = 1;
+}
+
+// choice ::=
+//      <simple_expression>
+//    | <discrete_range>
+//    | element_<simple_name>
+//    | others
+message Choice {
+    oneof choice {
+        SimpleExpression simpleExpr = 1;
+        DiscreteRange discreteRange = 2;
+        SimpleName simpName = 3;
+        bool others = 4;
+    }
+}
+
+// function_call ::=
+//      function_<name> [ ( <actual_parameter_part> ) ]
+message FunctionCall {
+    required Name funcName = 1;
+    optional ActualParameterPart actualParamPart = 2;
+}
+
+// actual_parameter_part ::= parameter_<association_list>
+message ActualParameterPart {
+    required AssociationList assocList = 1;
+}
+
+// qualified_expression ::=
+//      <type_mark> ' ( <expression> )
+//    | <type_mark> ' <aggregate>
+message QualifiedExpression {
+    required TypeMark typeMark = 1;
+    oneof expr {
+        Expression expression = 2;
+        Aggregate aggregate = 3;
+    }
+}
+
+// type_conversion ::= <type_mark> ( <expression> )
+message TypeConversion {
+    required TypeMark typeMark = 1;
+    required Expression expr = 2;
+}
+
+// allocator ::=
+//      new <subtype_indication> [ <generic_map_aspect> ]
+//    | new <qualified_expression>
+message Allocator {
+    message _SubtypeAllocator {
+        required SubtypeIndication subtypeInd = 1;
+        optional GenericMapAspect genMapAspect = 2;
+    }
+    oneof allocator {
+        _SubtypeAllocator subtypeAllocator = 1;
+        QualifiedExpression qualifiedExpr = 2;
+    }
+}
+
+// sequence_of_statements ::=
+//      { <sequential_statement> }
+message SequenceOfStatements {
+    repeated SequentialStatement stmts = 1;
+}
+
+// sequential_statement ::=
+//      <wait_statement>
+//    | <assertion_statement>
+//    | <report_statement>
+//    | <signal_assignment_statement>
+//    | <variable_assignment_statement>
+//    | <procedure_call_statement>
+//    | <if_statement>
+//    | <case_statement>
+//    | <loop_statement>
+//    | <next_statement>
+//    | <exit_statement>
+//    | <return_statement>
+//    | <null_statement>
+message SequentialStatement {
+    oneof stmt {
+        WaitStatement waitStmt = 1;
+        AssertionStatement assertionStmt = 2;
+        ReportStatement reportStmt = 3;
+        SignalAssignmentStatement sigAssignStmt = 4;
+        VariableAssignmentStatement varAssignStmt = 5;
+        ProcedureCallStatement procCallStmt = 6;
+        IfStatement ifStmt = 7;
+        CaseStatement caseStmt = 8;
+        LoopStatement loopStmt = 9;
+        NextStatement nextStmt = 10;
+        ExitStatement exitStmt = 11;
+        ReturnStatement returnStmt = 12;
+        NullStatement nullStmt = 13;
+    }
+}
+
+// wait_statement ::=
+//      [ <label> : ] wait [ <sensitivity_clause> ] [ <condition_clause> ] [ <timeout_clause> ] ;
+message WaitStatement {
+    optional Label label = 1;
+    optional SensitivityClause sensitivityClause = 2;
+    optional ConditionClause conditionClause = 3;
+    optional TimeoutClause timeoutClause = 4;
+}
+
+// sensitivity_clause ::= on <sensitivity_list>
+message SensitivityClause {
+    required SensitivityList sensitivityList = 1;
+}
+
+// sensitivity_list ::= signal_<name> { , signal_<name> }
+message SensitivityList {
+    repeated Name sigNames = 1;
+}
+
+// condition_clause ::= until <condition>
+message ConditionClause {
+    required Condition condition = 1;
+}
+
+// condition ::= <expression>
+message Condition {
+    required Expression expression = 1;
+}
+
+// timeout_clause ::= for time_<expression>
+message TimeoutClause {
+    required Expression timeExpr = 1;
+}
+
+// assertion_statement ::= [ <label> : ] <assertion> ;
+message AssertionStatement {
+    optional Label label = 1;
+    required Assertion assertion = 2;
+}
+
+// assertion ::=
+//      assert <condition>
+//          [ report <expression> ]
+//          [ severity <expression> ]
+message Assertion {
+    required Condition condition = 1;
+    optional Expression reportExpr = 2;
+    optional Expression severityExpr = 3;
+}
+
+// report_statement ::=
+//      [ <label> : ]
+//          report <expression>
+//          [ severity <expression> ] ;
+message ReportStatement {
+    optional Label label = 1;
+    required Expression reportExpr = 2;
+    optional Expression severityExpr = 3;
+}
+
+// signal_assignment_statement ::=
+//      [ <label> : ] <simple_signal_assignment>
+//    | [ <label> : ] <conditional_signal_assignment>
+//    | [ <label> : ] <selected_signal_assignment>
+message SignalAssignmentStatement {
+    optional Label label = 1;
+    oneof assignment {
+        SimpleSignalAssignment simpleSigAssign = 2;
+        ConditionalSignalAssignment conditionalSigAssign = 3;
+        SelectedSignalAssignment selectedSigAssign = 4;
+    }
+}
+
+// simple_signal_assignment ::=
+//      <simple_waveform_assignment>
+//    | <simple_force_assignment>
+//    | <simple_release_assignment>
+message SimpleSignalAssignment {
+    oneof assignment {
+        SimpleWaveformAssignment waveformAssign = 1;
+        SimpleForceAssignment forceAssign = 2;
+        SimpleReleaseAssignment releaseAssign = 3;
+    }
+}
+
+// simple_waveform_assignment ::=
+//      <target> <= [ <delay_mechanism> ] <waveform> ;
+message SimpleWaveformAssignment {
+    required Target target = 1;
+    optional DelayMechanism delayMech = 2;
+    required Waveform waveform = 3;
+}
+
+// simple_force_assignment ::=
+//      <target> <= force [ <force_mode> ] <expression> ;
+message SimpleForceAssignment {
+    required Target target = 1;
+    optional ForceMode forceMode = 2;
+    required Expression expr = 3;
+}
+
+// simple_release_assignment ::=
+//      <target> <= release [ <force_mode> ] ;
+message SimpleReleaseAssignment {
+    required Target target = 1;
+    optional ForceMode forceMode = 2;
+}
+
+// force_mode ::= in | out
+enum ForceMode {
+    fIN = 0;
+    fOUT = 1;
+}
+
+// delay_mechanism ::=
+//      transport
+//    | [ reject time_<expression> ] inertial
+message DelayMechanism {
+    message _RejectInertial {
+        optional Expression rejectTimeExpr = 1;
+    }
+    oneof mechanism {
+        bool transport = 1;
+        _RejectInertial rejectInertial = 2;
+    }
+}
+
+// target ::=
+//      <name>
+//    | <aggregate>
+message Target {
+    oneof target {
+        Name name = 1;
+        Aggregate aggregate = 2;
+    }
+}
+
+// waveform ::=
+//      <waveform_element> { , <waveform_element> }
+//    | unaffected
+message Waveform {
+    message _WaveformElementList {
+        repeated WaveformElement elements = 1;
+    }
+    oneof waveform {
+        _WaveformElementList elements = 1;
+        bool unaffected = 2;
+    }
+}
+
+// waveform_element ::=
+//      value_<expression> [ after time_<expression> ]
+//    | null [ after time_<expression> ]
+message WaveformElement {
+    oneof element {
+        Expression valueExpr = 1;
+        bool isNull = 2;
+    }
+    optional Expression afterTime = 3;
+}
+
+// conditional_signal_assignment ::=
+//      <conditional_waveform_assignment>
+//    | <conditional_force_assignment>
+message ConditionalSignalAssignment {
+    oneof assignment {
+        ConditionalWaveformAssignment condWaveAssign = 1;
+        ConditionalForceAssignment condForceAssign = 2;
+    }
+}
+
+// conditional_waveform_assignment ::=
+//      <target> <= [ <delay_mechanism> ] <conditional_waveforms> ;
+message ConditionalWaveformAssignment {
+    required Target target = 1;
+    optional DelayMechanism delayMech = 2;
+    required ConditionalWaveforms condWaveforms = 3;
+}
+
+// conditional_waveforms ::=
+//      <waveform> when <condition>
+//      { else <waveform> when <condition> }
+//      [ else <waveform> ]
+message ConditionalWaveforms {
+    message _WaveformWhen {
+        required Waveform waveform = 1;
+        required Condition condition = 2;
+    }
+    required Waveform waveform = 1;
+    required Condition condition = 2;
+    repeated _WaveformWhen elseWaveforms = 3;
+    optional Waveform elseWaveform = 4;
+}
+
+// conditional_force_assignment ::=
+//      <target> <= force [ <force_mode> ] <conditional_expressions> ;
+message ConditionalForceAssignment {
+    required Target target = 1;
+    optional ForceMode mode = 2;
+    required ConditionalExpressions condExprs = 3;
+}
+
+// conditional_expressions ::=
+//      <expression> when <condition>
+//      { else <expression> when <condition> }
+//      [ else <expression> ]
+message ConditionalExpressions {
+    message _ConditionalExpression {
+        required Expression expression = 1;
+        required Condition condition = 2;
+    }
+    required Expression expression = 1;
+    required Condition condition = 2;
+    repeated _ConditionalExpression condExprs = 3;
+    optional Expression elseExpr = 4;
+}
+
+
+// selected_signal_assignment ::=
+//      <selected_waveform_assignment>
+//    | <selected_force_assignment>
+message SelectedSignalAssignment {
+    oneof assignment {
+        SelectedWaveformAssignment waveformAssign = 1;
+        SelectedForceAssignment forceAssign = 2;
+    }
+}
+
+// selected_waveform_assignment ::=
+//      with <expression> select [ ? ]
+//          <target> <= [ <delay_mechanism> ] <selected_waveforms> ;
+message SelectedWaveformAssignment {
+    required Expression expr = 1;
+    optional bool question = 2;
+    required Target target = 3;
+    optional DelayMechanism delayMech = 4;
+    required SelectedWaveforms selectedWaveforms = 5;
+}
+
+// selected_waveforms ::=
+//      { <waveform> when <choices> , }
+//      <waveform> when <choices>
+message SelectedWaveforms {
+    message _WaveformWhenChoices {
+        required Waveform waveform = 1;
+        required Choices choices = 2;
+    }
+    repeated _WaveformWhenChoices waveformWhenChoices = 1;
+}
+
+// selected_force_assignment ::=
+//      with <expression> select [ ? ]
+//          <target> <= force [ <force_mode> ] <selected_expressions> ;
+message SelectedForceAssignment {
+    required Expression expr = 1;
+    optional bool question = 2;
+    required Target target = 3;
+    optional ForceMode forceMode = 4;
+    required SelectedExpressions selectedExprs = 5;
+}
+
+// selected_expressions ::=
+//      { <expression> when <choices> , }
+//      <expression> when <choices>
+message SelectedExpressions {
+    message _ExpressionWhenChoices {
+        required Expression expression = 1;
+        required Choices choices = 2;
+    }
+    repeated _ExpressionWhenChoices expressionWhenChoices = 1;
+}
+
+// variable_assignment_statement ::=
+//      [ <label> : ] <simple_variable_assignment>
+//    | [ <label> : ] <conditional_variable_assignment>
+//    | [ <label> : ] <selected_variable_assignment>
+message VariableAssignmentStatement {
+    optional Label label = 1;
+    oneof assignment {
+        SimpleVariableAssignment simpleVarAssign = 2;
+        ConditionalVariableAssignment condVarAssign = 3;
+        SelectedVariableAssignment selectedVarAssign = 4;
+    }
+}
+
+// simple_variable_assignment ::=
+//      <target> := <expression> ;
+message SimpleVariableAssignment {
+    required Target target = 1;
+    required Expression expr = 2;
+}
+
+// conditional_variable_assignment ::=
+//      <target> := <conditional_expressions> ;
+message ConditionalVariableAssignment {
+    required Target target = 1;
+    required ConditionalExpressions condExprs = 2;
+}
+
+// selected_variable_assignment ::=
+//      with <expression> select [ ? ]
+//          <target> := <selected_expressions> ;
+message SelectedVariableAssignment {
+    required Expression expr = 1;
+    optional bool question = 2;
+    required Target target = 3;
+    required SelectedExpressions selectedExprs = 4;
+}
+
+// procedure_call_statement ::= [ <label> : ] <procedure_call> ;
+message ProcedureCallStatement {
+    optional Label label = 1;
+    required ProcedureCall procCall = 2;
+}
+
+// procedure_call ::= procedure_<name> [ ( <actual_parameter_part> ) ]
+message ProcedureCall {
+    required Name procName = 1;
+    optional ActualParameterPart actualParamPart = 2;
+}
+
+// if_statement ::=
+//      [ if_<label> : ]
+//          if <condition> then
+//              <sequence_of_statements>
+//          { elsif <condition> then
+//              <sequence_of_statements> }
+//          [ else
+//              <sequence_of_statements> ]
+//          end if [ if_<label> ] ;
+message IfStatement {
+    message _Elsif {
+        required Condition condition = 1;
+        required SequenceOfStatements stmts = 2;
+    }
+    optional Label label = 1;
+    required Condition condition = 2;
+    required SequenceOfStatements thenStmts = 3;
+    repeated _Elsif elsifs = 4;
+    optional SequenceOfStatements elseStmts = 5;
+}
+
+// case_statement ::=
+//      [ case_<label> : ]
+//          case [ ? ] <expression> is
+//              <case_statement_alternative>
+//              { <case_statement_alternative> }
+//          end case [ ? ] [ case_<label> ] ;
+message CaseStatement {
+    optional Label label = 1;
+    optional bool question = 2;
+    required Expression expr = 3;
+    repeated CaseStatementAlternative alternatives = 4;
+    optional bool trailingQuestion = 5;
+}
+
+// case_statement_alternative ::=
+//      when <choices> =>
+//          <sequence_of_statements>
+message CaseStatementAlternative {
+    required Choices choices = 1;
+    required SequenceOfStatements stmts = 2;
+}
+
+// loop_statement ::=
+//      [ loop_<label> : ]
+//          [ <iteration_scheme> ] loop
+//              <sequence_of_statements>
+//          end loop [ loop_<label> ] ;
+message LoopStatement {
+    optional Label label = 1;
+    optional IterationScheme iterationScheme = 2;
+    required SequenceOfStatements stmts = 3;
+}
+
+// iteration_scheme ::=
+//      while <condition>
+//    | for loop_<parameter_specification>
+message IterationScheme {
+    oneof scheme {
+        Condition whileCondition = 1;
+        ParameterSpecification forParamSpec = 2;
+    }
+}
+
+// parameter_specification ::=
+//      <identifier> in <discrete_range>
+message ParameterSpecification {
+    required Identifier id = 1;
+    required DiscreteRange discRange = 2;
+}
+
+// next_statement ::=
+//      [ <label> : ] next [ loop_<label> ] [ when <condition> ] ;
+message NextStatement {
+    optional Label label = 1;
+    optional Label loopLabel = 2;
+    optional Condition condition = 3;
+}
+
+// exit_statement ::=
+//      [ <label> : ] exit [ loop_<label> ] [ when <condition> ] ;
+message ExitStatement {
+    optional Label label = 1;
+    optional Label loopLabel = 2;
+    optional Condition condition = 3;
+}
+
+// return_statement ::=
+//      [ <label> : ] return [ <expression> ] ;
+message ReturnStatement {
+    optional Label label = 1;
+    optional Expression expr = 2;
+}
+
+// null_statement ::= [ <label> : ] null ;
+message NullStatement {
+    optional Label label = 1;
+}
+
+// concurrent_statement ::=
+//      <block_statement>
+//    | <process_statement>
+//    | <concurrent_procedure_call_statement>
+//    | <concurrent_assertion_statement>
+//    | <concurrent_signal_assignment_statement>
+//    | <component_instantiation_statement>
+//    | <generate_statement>
+message ConcurrentStatement {
+    oneof stmt {
+        BlockStatement blockStmt = 1;
+        ProcessStatement processStmt = 2;
+        ConcurrentProcedureCallStatement conProcCallStmt = 3;
+        ConcurrentAssertionStatement conAssertStmt = 4;
+        ConcurrentSignalAssignmentStatement conSigAssignStmt = 5;
+        ComponentInstantiationStatement compInstStmt = 6;
+        GenerateStatement genStmt = 7;
+    }
+}
+
+// block_statement ::=
+//      block_<label> :
+//          block [ ( guard_<condition> ) ] [ is ]
+//              <block_header>
+//              <block_declarative_part>
+//          begin
+//              <block_statement_part>
+//      end block [ block_<label> ] ;
+message BlockStatement {
+    required Label label = 1;
+    optional Condition guard = 2;
+    required BlockHeader header = 3;
+    required BlockDeclarativePart declPart = 4;
+    required BlockStatementPart stmtPart = 5;
+}
+
+// block_header ::=
+//      [ <generic_clause>
+//      [ <generic_map_aspect> ; ] ]
+//      [ <port_clause>
+//      [ <port_map_aspect> ; ] ]
+message BlockHeader {
+    message _Gen {
+        required GenericClause genClause = 1;
+        optional GenericMapAspect genMapAspect = 2;
+    }
+    message _Port {
+        required PortClause portClause = 1;
+        optional PortMapAspect portMapAspect = 2;
+    }
+    optional _Gen gen = 1;
+    optional _Port port = 2;
+}
+
+// block_declarative_part ::=
+//      { <block_declarative_item> }
+message BlockDeclarativePart {
+    repeated BlockDeclarativeItem items = 1;
+}
+
+// block_statement_part ::=
+//      { <concurrent_statement> }
+message BlockStatementPart {
+    repeated ConcurrentStatement stmts = 1;
+}
+
+// process_statement ::=
+//      [ process_<label> : ]
+//          [ postponed ] process [ ( <process_sensitivity_list> ) ] [ is ]
+//              <process_declarative_part>
+//          begin
+//              <process_statement_part>
+//          end [ postponed ] process [ process_<label> ] ;
+message ProcessStatement {
+    optional Label label = 1;
+    optional bool postponed = 2;
+    optional ProcessSensitivityList sensitivityList = 3;
+    required ProcessDeclarativePart declPart = 4;
+    required ProcessStatementPart stmtPart = 5;
+}
+
+// process_sensitivity_list ::= all | <sensitivity_list>
+message ProcessSensitivityList {
+    oneof list {
+        bool all = 1;
+        SensitivityList sensitivityList = 2;
+    }
+}
+
+// process_declarative_part ::=
+//      { <process_declarative_item> }
+message ProcessDeclarativePart {
+    repeated ProcessDeclarativeItem items = 1;
+}
+
+// process_declarative_item ::=
+//      <subprogram_declaration>
+//    | <subprogram_body>
+//    | <subprogram_instantiation_declaration>
+//    | <package_declaration>
+//    | <package_body>
+//    | <package_instantiation_declaration>
+//    | <type_declaration>
+//    | <subtype_declaration>
+//    | <constant_declaration>
+//    | <variable_declaration>
+//    | <file_declaration>
+//    | <alias_declaration>
+//    | <attribute_declaration>
+//    | <attribute_specification>
+//    | <use_clause>
+//    | <group_template_declaration>
+//    | <group_declaration>
+message ProcessDeclarativeItem {
+    oneof item {
+        SubprogramDeclaration subprogDecl = 1;
+        SubprogramBody subprogBody = 2;
+        SubprogramInstantiationDeclaration subprogInstDecl = 3;
+        PackageDeclaration pkgDecl = 4;
+        PackageBody pkgBody = 5;
+        PackageInstantiationDeclaration pkgInstDecl = 6;
+        TypeDeclaration typeDecl = 7;
+        SubtypeDeclaration subtypeDecl = 8;
+        ConstantDeclaration constDecl = 9;
+        VariableDeclaration varDecl = 10;
+        FileDeclaration fileDecl = 11;
+        AliasDeclaration aliasDecl = 12;
+        AttributeDeclaration attrDecl = 13;
+        AttributeSpecification attrSpec = 14;
+        UseClause useClause = 15;
+        GroupTemplateDeclaration grpTmpDecl = 16;
+        GroupDeclaration grpDecl = 17;
+    }
+}
+
+// process_statement_part ::=
+//      { <sequential_statement> }
+message ProcessStatementPart {
+    repeated SequentialStatement stmts = 1;
+}
+
+// concurrent_procedure_call_statement ::=
+//      [ <label> : ] [ postponed ] <procedure_call> ;
+message ConcurrentProcedureCallStatement {
+    optional Label label = 1;
+    optional bool postponed = 2;
+    required ProcedureCall procCall = 3;
+}
+
+// concurrent_assertion_statement ::=
+//      [ <label> : ] [ postponed ] <assertion> ;
+message ConcurrentAssertionStatement {
+    optional Label label = 1;
+    optional bool postponed = 2;
+    required Assertion assertion = 3;
+}
+
+// concurrent_signal_assignment_statement ::=
+//      [ <label> : ] [ postponed ] <concurrent_simple_signal_assignment>
+//    | [ <label> : ] [ postponed ] <concurrent_conditional_signal_assignment>
+//    | [ <label> : ] [ postponed ] <concurrent_selected_signal_assignment>
+message ConcurrentSignalAssignmentStatement {
+    optional Label label = 1;
+    optional bool postponed = 2;
+    oneof assignment {
+        ConcurrentSimpleSignalAssignment simpleSigAssign = 3;
+        ConcurrentConditionalSignalAssignment conditionalSigAssign = 4;
+        ConcurrentSelectedSignalAssignment selectedSigAssign = 5;
+    }
+}
+
+// concurrent_simple_signal_assignment ::=
+//      <target> <= [ guarded ] [ <delay_mechanism> ] <waveform> ;
+message ConcurrentSimpleSignalAssignment {
+    required Target target = 1;
+    optional bool guarded = 2;
+    optional DelayMechanism delayMech = 3;
+    required Waveform waveform = 4;
+}
+
+// concurrent_conditional_signal_assignment ::=
+//      <target> <= [ guarded ] [ <delay_mechanism> ] <conditional_waveforms> ;
+message ConcurrentConditionalSignalAssignment {
+    required Target target = 1;
+    optional bool guarded = 2;
+    optional DelayMechanism delayMech = 3;
+    required ConditionalWaveforms condWaveforms = 4;
+}
+
+// concurrent_selected_signal_assignment ::=
+//      with <expression> select [ ? ]
+//          <target> <= [ guarded ] [ <delay_mechanism> ] <selected_waveforms> ;
+message ConcurrentSelectedSignalAssignment {
+    required Expression expr = 1;
+    optional bool question = 2;
+    required Target target = 3;
+    optional bool guarded = 4;
+    optional DelayMechanism delayMech = 5;
+    required SelectedWaveforms selectedWaveforms = 6;
+}
+
+// component_instantiation_statement ::=
+//      instantiation_<label> :
+//          <instantiated_unit>
+//              [ <generic_map_aspect> ]
+//              [ <port_map_aspect> ] ;
+message ComponentInstantiationStatement {
+    required Label label = 1;
+    required InstantiatedUnit instantiatedUnit = 2;
+    optional GenericMapAspect genMapAspect = 3;
+    optional PortMapAspect portMapAspect = 4;
+}
+
+// instantiated_unit ::=
+//      [ component ] component_<name>
+//    | entity entity_<name> [ ( architecture_<identifier> ) ]
+//    | configuration configuration_<name>
+message InstantiatedUnit {
+    message _EntityInstantiatedUnit {
+        required Name entityName = 1;
+        optional Identifier architectureId = 2;
+    }
+    oneof unit {
+        Name componentName = 1;
+        _EntityInstantiatedUnit entity = 2;
+        Name configurationName = 3;
+    }
+}
+
+// generate_statement ::=
+//      <for_generate_statement>
+//    | <if_generate_statement>
+//    | <case_generate_statement>
+message GenerateStatement {
+    oneof stmt {
+        ForGenerateStatement forGenStmt = 1;
+        IfGenerateStatement ifGenStmt = 2;
+        CaseGenerateStatement caseGenStmt = 3;
+    }
+}
+
+// for_generate_statement ::=
+//      generate_<label> :
+//          for generate_<parameter_specification> generate
+//              <generate_statement_body>
+//          end generate [ generate_<label> ] ;
+message ForGenerateStatement {
+    required Label label = 1;
+    required ParameterSpecification paramSpec = 2;
+    required GenerateStatementBody body = 3;
+}
+
+// if_generate_statement ::=
+//          generate_<label> :
+//              if [ alternative_<label> : ] <condition> generate
+//                  <generate_statement_body>
+//              { elsif [ alternative_<label> : ] <condition> generate
+//                  <generate_statement_body> }
+//              [ else [ alternative_<label> : ] generate
+//                  <generate_statement_body> ]
+//              end generate [ generate_<label> ] ;
+message IfGenerateStatement {
+    message _Elsif {
+        optional Label altLabel = 1;
+        required Condition condition = 2;
+        required GenerateStatementBody body = 3;
+    }
+    message _Else {
+        optional Label altLabel = 1;
+        required GenerateStatementBody body = 2;
+    }
+    required Label label = 1;
+    optional Label altLabel = 2;
+    required Condition condition = 3;
+    required GenerateStatementBody body = 4;
+    repeated _Elsif elsifs = 5;
+    optional _Else else_ = 6;
+}
+
+// case_generate_statement ::=
+//      generate_<label> :
+//          case <expression> generate
+//              <case_generate_alternative>
+//              { <case_generate_alternative> }
+//      end generate [ generate_<label> ] ;
+message CaseGenerateStatement {
+    required Label label = 1;
+    required Expression expr = 2;
+    repeated CaseGenerateAlternative alternatives = 3;
+}
+
+// case_generate_alternative ::=
+//      when [ alternative_<label> : ] <choices> =>
+//          <generate_statement_body>
+message CaseGenerateAlternative {
+    optional Label altLabel = 1;
+    required Choices choices = 2;
+    required GenerateStatementBody body = 3;
+}
+
+// generate_statement_body ::=
+//          [ <block_declarative_part>
+//      begin ]
+//          { <concurrent_statement> }
+//      [ end [ alternative_<label> ] ; ]
+message GenerateStatementBody {
+    optional BlockDeclarativePart declPart = 1;
+    repeated ConcurrentStatement stmts = 2;
+}
+
+// label ::= <identifier>
+message Label {
+    required Identifier id = 1;
+}
+
+// use_clause ::=
+//      use <selected_name> { , <selected_name> } ;
+message UseClause {
+    repeated SelectedName selectedNames = 1;
+}
+
+// design_file ::= <design_unit> { <design_unit> }
+message DesignFile {
+    repeated DesignUnit units = 1;
+}
+
+// design_unit ::= <context_clause> <library_unit>
+message DesignUnit {
+    required ContextClause contextClause = 1;
+    required LibraryUnit libraryUnit = 2;
+}
+
+// library_unit ::=
+//      <primary_unit>
+//    | <secondary_unit>
+message LibraryUnit {
+    oneof unit {
+        PrimaryUnit primaryUnit = 1;
+        SecondaryUnit secondaryUnit = 2;
+    }
+}
+
+// primary_unit ::=
+//      <entity_declaration>
+//    | <configuration_declaration>
+//    | <package_declaration>
+//    | <package_instantiation_declaration>
+//    | <context_declaration>
+message PrimaryUnit {
+    oneof unit {
+        EntityDeclaration entityDecl = 1;
+        ConfigurationDeclaration configDecl = 2;
+        PackageDeclaration pkgDecl = 3;
+        PackageInstantiationDeclaration pkgInstDecl = 4;
+        ContextDeclaration contextDecl = 5;
+    }
+}
+
+// secondary_unit ::=
+//      <architecture_body>
+//    | <package_body>
+message SecondaryUnit {
+    oneof unit {
+        ArchitectureBody archBody = 1;
+        PackageBody pkgBody = 2;
+    }
+}
+
+// library_clause ::= library <logical_name_list> ;
+message LibraryClause {
+    required LogicalNameList logicalNames = 1;
+}
+
+// logical_name_list ::= <logical_name> { , <logical_name> }
+message LogicalNameList {
+    repeated LogicalName logicalNames = 1;
+}
+
+// logical_name ::= <identifier>
+message LogicalName {
+    required Identifier id = 1;
+}
+
+// context_declaration ::=
+//      context <identifier> is
+//          <context_clause>
+//      end [ context ] [ context_<simple_name> ] ;
+message ContextDeclaration {
+    required Identifier id = 1;
+    required ContextClause contextClause = 2;
+}
+
+// context_clause ::= { <context_item> }
+message ContextClause {
+    repeated ContextItem items = 1;
+}
+
+// context_item ::=
+//      <library_clause>
+//    | <use_clause>
+//    | <context_reference>
+message ContextItem {
+    oneof item {
+        LibraryClause libraryClause = 1;
+        UseClause useClause = 2;
+        ContextReference contextRef = 3;
+    }
+}
+
+// context_reference ::=
+//      context <selected_name> { , <selected_name> } ;
+message ContextReference {
+    repeated SelectedName selectedNames = 1;
+}
+
+// basic_graphic_character ::=
+//      <upper_case_letter> | <digit> | <special_character> | <space_character>
+// ==> ignored for proto efficiency
+
+// graphic_character ::=
+//      <basic_graphic_character> | <lower_case_letter> | <other_special_character>
+// ==> ignored for proto efficiency
+
+// basic_character ::=
+//      <basic_graphic_character> | <format_effector>
+// ==> ignored for proto efficiency
+
+// identifier ::= <basic_identifier> | <extended_identifier>
+message Identifier {
+    required string id = 1;
+}
+
+// basic_identifier ::=
+//      <letter> { [ underline ] <letter_or_digit> }
+// ==> ignored for proto efficiency
+
+// letter_or_digit ::= <letter> | <digit>
+// ==> ignored for proto efficiency
+
+// letter ::= <upper_case_letter> | <lower_case_letter>
+// ==> ignored for proto efficiency
+
+// extended_identifier ::=
+//      \ <graphic_character> { <graphic_character> } \
+// ==> ignored for proto efficiency
+
+// abstract_literal ::= <decimal_literal> | <based_literal>
+message AbstractLiteral {
+    oneof lit {
+        DecimalLiteral decimalLit = 1;
+        BasedLiteral basedLit = 2;
+    }
+}
+
+// decimal_literal ::= <integer> [ . <integer> ] [ <exponent> ]
+message DecimalLiteral {
+    required int32 integer = 1;
+    optional int32 fraction = 2;
+    optional Exponent exponent = 3;
+}
+
+// integer ::= <digit> { [ underline ] <digit> }
+// ==> ignored for proto efficiency
+
+// exponent ::= E [ + ] <integer> | E – <integer>
+message Exponent {
+    optional bool minus = 1;
+    required int32 integer = 2;
+}
+
+// based_literal ::=
+//      <base> # <based_integer> [ . <based_integer> ] # [ <exponent> ]
+message BasedLiteral {
+    required int32 base = 1;
+    required string integer = 2;
+    optional string fraction = 3;
+    optional Exponent exponent = 4;
+}
+
+// base ::= <integer>
+// ==> ignored for proto efficiency
+
+// based_integer ::=
+//      <extended_digit> { [ underline ] <extended_digit> }
+// ==> ignored for proto efficiency
+
+// extended_digit ::= <digit> | <letter>
+// ==> ignored for proto efficiency
+
+// character_literal ::= ' <graphic_character> '
+message CharacterLiteral {
+    required string value = 1;
+}
+
+// string_literal ::= " { <graphic_character> } "
+message StringLiteral {
+    required string value = 1;
+}
+
+// bit_string_literal ::= [ <integer> ] <base_specifier> " [ <bit_value> ] "
+message BitStringLiteral {
+    optional int32 size = 1;
+    required BaseSpecifier base = 2;
+    optional string value = 3;
+}
+
+// bit_value ::= <graphic_character> { [ underline ] <graphic_character> }
+// ==> ignored for proto efficiency
+
+// base_specifier ::= B | O | X | UB | UO | UX | SB | SO | SX | D
+enum BaseSpecifier {
+    B = 0;
+    O = 1;
+    X = 2;
+    UB = 3;
+    UO = 4;
+    UX = 5;
+    SB = 6;
+    SO = 7;
+    SX = 8;
+    D = 9;
+}

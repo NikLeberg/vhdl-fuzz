@@ -5,10 +5,7 @@ include(FindProtobuf)
 find_package(Protobuf REQUIRED)
 
 # Compile proto files to C++ header and implementation.
-protobuf_generate_cpp(proto_src proto_hdr
-    vhdl2019.proto
-    stubs.proto
-)
+protobuf_generate_cpp(proto_src proto_hdr vhdl2008.proto vhdl2019.proto)
 
 # Create library from proto files.
 add_library(proto SHARED ${proto_src} ${proto_hdr})
