@@ -10,6 +10,7 @@
 //  - identifier/name handling is based on simple strings
 
 syntax = "proto2";
+package VHDL2019;
 
 // entity_declaration ::=
 //      entity <identifier> is
@@ -1144,7 +1145,8 @@ message ConstantDeclaration {
 }
 
 // signal_declaration ::=
-//      signal <identifier_list> : <subtype_indication> [ <signal_kind> ] [ := <conditional_expression> ] ;
+//      signal <identifier_list> : <subtype_indication> [ <signal_kind> ]
+//          [ := <conditional_expression> ] ;
 message SignalDeclaration {
     required IdentifierList idList = 1;
     required SubtypeIndication subtypeInd = 2;
@@ -1469,7 +1471,7 @@ message GenericList {
 // port_clause ::=
 //      port ( <port_list> ) ;
 message PortClause {
-    required PortList genList = 1;
+    required PortList portList = 1;
 }
 
 // port_list ::= port_<interface_list>
@@ -2671,21 +2673,6 @@ message IfStatement {
     required SequenceOfStatements thenStmts = 3;
     repeated _Elsif elsifs = 4;
     optional SequenceOfStatements elseStmts = 5;
-}
-
-// sequential_statement_body ::=
-//      [ <sequential_statement_declarative_part>
-//      begin ]
-//      <sequence_of_statements>
-message SequentialStatementBody {
-    optional SequentialStatementDeclarativePart declPart = 1;
-    required SequenceOfStatements stmts = 2;
-}
-
-// sequential_statement_declarative_part ::=
-//      { <process_declarative_item> }
-message SequentialStatementDeclarativePart {
-    repeated ProcessDeclarativeItem items = 1;
 }
 
 // case_statement ::=
