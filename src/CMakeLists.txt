@@ -15,6 +15,7 @@ target_link_libraries(gen19e INTERFACE main)
 # Create executable for proto based fuzzer.
 add_executable(fuzz fuzz.cc fuzz.h)
 target_include_directories(fuzz INTERFACE ${CMAKE_CURRENT_LIST_DIR})
+target_compile_options(fuzz PRIVATE -fsanitize=fuzzer)
 target_link_options(fuzz PRIVATE -fsanitize=fuzzer)
 target_link_libraries(fuzz PRIVATE proto gen19 mutator)
 target_link_libraries(fuzz INTERFACE main mutator)
@@ -27,7 +28,7 @@ file(MAKE_DIRECTORY
 
 # Target to run fuzzer.
 add_custom_target(run
-    COMMAND ./fuzz ./corpus -exact_artifact_path=./crash
+    COMMAND ./fuzz -only_ascii=1 -report_slow_units=2 ./corpus
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     DEPENDS fuzz
     BYPRODUCTS ${CMAKE_CURRENT_BINARY_DIR}/corpus

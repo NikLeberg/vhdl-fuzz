@@ -1,11 +1,12 @@
 # SPDX-License-Identifier: MIT
 
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.19)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_C_COMPILER "clang")
 
-project(vhdl-fuzz LANGUAGES CXX)
+project(vhdl-fuzz LANGUAGES C CXX)
 
 # Add interface library "main" to propagate dependencies and compiler settings.
 add_library(main INTERFACE)
