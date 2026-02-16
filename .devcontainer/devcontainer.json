@@ -5,7 +5,9 @@
     },
     "runArgs": [
         // set a human friendly machine name for the container
-        "--hostname=${localWorkspaceFolderBasename}"
+        "--hostname=${localWorkspaceFolderBasename}",
+        // disable core dumps
+        "--ulimit", "core=0"
     ],
     "customizations": {
         "vscode": {
@@ -14,13 +16,10 @@
                 // C code Intellisense and code formater / helpers.
                 "ms-vscode.cpptools",
                 // Protocol buffers syntax.
-                "peterj.proto"
-            ],
-            // Container specific settings.json values on container create.
-            "settings": {
-                // Slow down scrolling in intergrated terminal
-                "terminal.integrated.mouseWheelScrollSensitivity": 0.2
-            }
+                "peterj.proto",
+                // CMake language tools.
+                "ms-vscode.cmake-tools"
+            ]
         }
     }
 }
