@@ -7,6 +7,11 @@ target_compile_options(gen19 PRIVATE -fsanitize=fuzzer)
 target_link_libraries(gen19 PRIVATE proto)
 target_link_libraries(gen19 INTERFACE main)
 
+add_executable(gen19e gen19.cc gen19.h)
+target_compile_definitions(gen19e PRIVATE GEN_MAIN)
+target_link_libraries(gen19e PRIVATE proto)
+target_link_libraries(gen19e INTERFACE main)
+
 # Create executable for proto based fuzzer.
 add_executable(fuzz fuzz.cc fuzz.h)
 target_include_directories(fuzz INTERFACE ${CMAKE_CURRENT_LIST_DIR})

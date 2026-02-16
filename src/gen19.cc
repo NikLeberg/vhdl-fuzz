@@ -4696,3 +4696,47 @@ void Gen::g_base_specifier(const BaseSpecifier base) {
         break;
     }
 }
+
+#ifdef GEN_MAIN
+#include <cstdio>
+#include <cstdlib>
+#include <fstream>
+#include <sstream>
+
+#include <google/protobuf/text_format.h>
+#include <google/protobuf/io/zero_copy_stream_impl.h>
+
+extern "C" int main(int argc, char** argv) {
+    if (argc < 2) {
+        std::cerr << "Usage: " << argv[0] << " <file>" << std::endl;
+        return EXIT_FAILURE;
+    }
+
+    const char* path = argv[1];
+    std::ifstream file(path);
+    if (!file) {
+        std::cerr << "Error opening file" << std::endl;
+        return EXIT_FAILURE;
+    }
+
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+    std::string content = buffer.str();
+    file.close();
+
+    DesignFile designFile;
+    if (!google::protobuf::TextFormat::ParseFromString(content, &designFile)) {
+        std::cerr << "Failed to parse protobuf text format" << std::endl;
+        return EXIT_FAILURE;
+    }
+
+    try {
+        std::cout << Gen().generate_vhdl_from_proto(designFile) << std::endl;
+    } catch (const std::invalid_argument &e) {
+        std::cerr << "Proto message does not represent valid VHDL."
+                  << " Caught exception: " << e.what() << std::endl;
+        return EXIT_FAILURE;
+    }
+    return EXIT_SUCCESS;
+}
+#endif
