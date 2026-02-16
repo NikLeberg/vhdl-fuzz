@@ -1,16 +1,17 @@
 # SPDX-License-Identifier: MIT
 
-# Create library for VHDL generator.
-add_library(gen SHARED gen.cc gen.h)
-target_include_directories(gen INTERFACE ${CMAKE_CURRENT_LIST_DIR})
-target_link_libraries(gen PRIVATE proto)
-target_link_libraries(gen INTERFACE main)
+# Create library for VHDL2019 generator.
+add_library(gen19 SHARED gen19.cc gen19.h)
+target_include_directories(gen19 INTERFACE ${CMAKE_CURRENT_LIST_DIR})
+target_compile_options(gen19 PRIVATE -fsanitize=fuzzer)
+target_link_libraries(gen19 PRIVATE proto)
+target_link_libraries(gen19 INTERFACE main)
 
 # Create executable for proto based fuzzer.
 add_executable(fuzz fuzz.cc fuzz.h)
 target_include_directories(fuzz INTERFACE ${CMAKE_CURRENT_LIST_DIR})
 target_link_options(fuzz PRIVATE -fsanitize=fuzzer)
-target_link_libraries(fuzz PRIVATE proto gen mutator)
+target_link_libraries(fuzz PRIVATE proto gen19 mutator)
 target_link_libraries(fuzz INTERFACE main mutator)
 
 # Create paths for the fuzzing process.

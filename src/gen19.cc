@@ -3,19 +3,16 @@
 #include "vhdl2019.pb.h"
 #include <string>
 
-#include "gen.h"
+#include "gen19.h"
+
+using namespace VHDL2019;
 
 // Generate VHDL from BNF structured protobuf message.
 std::string Gen::generate_vhdl_from_proto(const DesignFile &designFile) {
     out_.str("");
     out_.clear();
-    try {
-        g_design_file(designFile);
-        return out_.str();
-    } catch (const std::invalid_argument &e) {
-        // ignore malformed proto message
-        return "";
-    }
+    g_design_file(designFile);
+    return out_.str();
 }
 
 void Gen::g_entity_declaration(const EntityDeclaration &entityDecl) {
@@ -30,8 +27,8 @@ void Gen::g_entity_declaration(const EntityDeclaration &entityDecl) {
         g_entity_declarative_part(entityDecl.declpart());
     }
 
+    out_ << "begin\n";
     if (entityDecl.has_stmtpart()) {
-        out_ << "begin\n";
         g_entity_statement_part(entityDecl.stmtpart());
     }
     out_ << "end;\n";
@@ -2032,7 +2029,7 @@ void Gen::g_generic_list(const GenericList &genList) {
 
 void Gen::g_port_clause(const PortClause &portClause) {
     out_ << "port (";
-    g_port_list(portClause.genlist());
+    g_port_list(portClause.portlist());
     out_ << ");\n";
 }
 
@@ -3836,20 +3833,6 @@ void Gen::g_if_statement(const IfStatement &ifStmt) {
     out_ << "end if;\n";
 }
 
-void Gen::g_sequential_statement_body(const SequentialStatementBody &body) {
-    if (body.has_declpart()) {
-        g_sequential_statement_declarative_part(body.declpart());
-        out_ << "begin\n";
-    }
-    g_sequence_of_statements(body.stmts());
-}
-
-void Gen::g_sequential_statement_declarative_part(const SequentialStatementDeclarativePart &declPart) {
-    for (const auto &item : declPart.items()) {
-        g_process_declarative_item(item);
-    }
-}
-
 void Gen::g_case_statement(const CaseStatement &caseStmt) {
     if (caseStmt.has_label()) {
         g_label(caseStmt.label());
@@ -4477,7 +4460,6 @@ void Gen::g_design_file(const DesignFile &designFile) {
 
 void Gen::g_design_unit(const DesignUnit &unit) {
     g_context_clause(unit.contextclause());
-    out_ << " ";
     g_library_unit(unit.libraryunit());
 }
 

@@ -7,6 +7,8 @@
 
 #include "vhdl2019.pb.h"
 
+using namespace VHDL2019;
+
 class Gen {
   public:
     Gen() = default;
@@ -289,8 +291,6 @@ class Gen {
     void g_procedure_call_statement(const ProcedureCallStatement &procCallStmt);
     void g_procedure_call(const ProcedureCall &procCall);
     void g_if_statement(const IfStatement &ifStmt);
-    void g_sequential_statement_body(const SequentialStatementBody &body);
-    void g_sequential_statement_declarative_part(const SequentialStatementDeclarativePart &declPart);
     void g_case_statement(const CaseStatement &caseStmt);
     void g_case_statement_alternative(const CaseStatementAlternative &alt);
     void g_loop_statement(const LoopStatement &loopStmt);
