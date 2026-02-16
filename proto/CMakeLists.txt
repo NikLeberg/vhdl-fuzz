@@ -11,7 +11,7 @@ protobuf_generate_cpp(proto_src proto_hdr vhdl2008.proto vhdl2019.proto)
 add_library(proto SHARED ${proto_src} ${proto_hdr})
 get_filename_component(PROTO_HDR_DIR "${proto_hdr}" DIRECTORY)
 target_include_directories(proto INTERFACE ${PROTOBUF_INCLUDE_DIR} ${PROTO_HDR_DIR})
-target_link_libraries(proto PRIVATE ${Protobuf_LIBRARIES})
+target_link_libraries(proto PUBLIC ${Protobuf_LIBRARIES})
 target_link_libraries(proto INTERFACE main)
 
 # Include and find libprotobuf-mutator library.
